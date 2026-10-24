@@ -162,6 +162,9 @@ Se definen en Netlify (Site settings → Environment variables) o en un `.env` l
 3. Eventos: `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `checkout.session.expired`, `payment_intent.payment_failed`.
 4. Copiar el *signing secret* (`whsec_…`) a `STRIPE_WEBHOOK_SECRET` y volver a desplegar.
 
+El recorrido completo —clic a clic, incluido el paso a modo live, la compra de prueba y
+la verificación posterior— está en **[GUIA-STRIPE-Y-DOMINIO.md](GUIA-STRIPE-Y-DOMINIO.md)**.
+
 ## 7. Despliegue en Netlify
 
 `netlify.toml` ya define todo:
@@ -246,6 +249,8 @@ Todo el movimiento se desactiva con `@media (prefers-reduced-motion: reduce)`.
 
 1. **Claves de Stripe** en Netlify y alta del webhook (sección 6) para activar cobros reales.
 2. **Dominio propio** (`lumiko.shop` o similar) con DNS en Netlify y HTTPS automático.
+
+Los dos primeros están detallados paso a paso en [GUIA-STRIPE-Y-DOMINIO.md](GUIA-STRIPE-Y-DOMINIO.md).
 3. **Autenticación** solo si se quiere historial de pedidos: hoy el pedido se consulta por `session_id` y el correo de Stripe es la confirmación.
 4. **Base de datos** (Netlify Blobs, Supabase o Postgres) cuando haga falta stock, panel de pedidos o facturas: hoy Stripe es el registro.
 5. **Cuenta profesional con Abysse Corp** (`trade.abyssecorp.com`): pasaría de PVP a mayorista y el margen de esas 12 referencias subiría sin tocar código.
