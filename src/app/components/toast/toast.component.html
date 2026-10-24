@@ -1,0 +1,21 @@
+<div class="pointer-events-none fixed bottom-5 right-5 z-[90] flex w-[min(92vw,360px)] flex-col gap-2">
+  <div
+    *ngFor="let item of toast.toasts$ | async"
+    [@pop]
+    class="pointer-events-auto flex items-start gap-3 rounded-2xl border border-white/12 bg-ink-800/95 p-3.5 shadow-card backdrop-blur-xl"
+  >
+    <span
+      class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
+      [class.bg-neon-lime]="item.tone === 'success'"
+      [class.text-ink-900]="item.tone === 'success'"
+      [class.bg-neon-cyan]="item.tone === 'info'"
+    >
+      <svg *ngIf="item.tone === 'success'" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>
+      <svg *ngIf="item.tone === 'info'" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 8h.01M11 12h1v4h1"/></svg>
+    </span>
+    <p class="flex-1 text-[12.5px] leading-relaxed text-slate-200">{{ item.message }}</p>
+    <button type="button" (click)="toast.dismiss(item.id)" class="text-slate-500 transition hover:text-white" aria-label="Cerrar aviso">
+      <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+</div>

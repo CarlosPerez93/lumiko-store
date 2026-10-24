@@ -1,0 +1,148 @@
+<div class="pointer-events-none fixed inset-0 z-[80]">
+  <div
+    *ngIf="open"
+    class="pointer-events-auto absolute inset-0 bg-ink-900/70 backdrop-blur-soft"
+    [@backdrop]
+    (click)="close()"
+  ></div>
+
+  <aside
+    *ngIf="open"
+    class="pointer-events-auto absolute right-0 top-0 flex h-full w-full max-w-[440px] flex-col border-l border-white/10 bg-ink-800/95 backdrop-blur-2xl"
+    [@drawer]
+    role="dialog"
+    aria-modal="true"
+    aria-label="Carrito de la compra"
+  >
+    <!-- Cabecera -->
+    <header class="flex items-center justify-between border-b border-white/10 px-5 py-4">
+      <div class="flex items-center gap-3">
+        <h2 class="font-display text-lg font-bold text-white">Tu carrito</h2>
+        <span class="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-bold text-slate-200">{{ state?.count || 0 }}</span>
+      </div>
+      <button type="button" (click)="close()" class="icon-btn h-9 w-9" aria-label="Cerrar carrito">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </header>
+
+    <!-- Envío gratis -->
+    <div *ngIf="state?.count" class="border-b border-white/10 px-5 py-4">
+      <p class="text-[12px] text-slate-400">
+        <ng-container *ngIf="state.freeShippingRemaining > 0; else freeShipping">
+          Te faltan <span class="font-semibold text-white">{{ state.freeShippingRemaining | currency: 'EUR' : 'symbol' : '1.2-2' }}</span> para el envío gratis
+        </ng-container>
+        <ng-template #freeShipping>
+          <span class="font-semibold text-neon-lime">¡Envío gratis conseguido!</span>
+        </ng-template>
+      </p>
+      <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+        <div
+          class="h-full rounded-full bg-gradient-to-r from-neon-pink to-neon-cyan transition-all duration-700 ease-out"
+          [style.width.%]="state.freeShippingProgress"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Contenido -->
+    <div class="flex-1 overflow-y-auto px-5 py-4">
+      <!-- Vacío -->
+      <div *ngIf="!state?.count" class="flex h-full flex-col items-center justify-center py-16 text-center">
+        <div class="relative flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-white/[0.04]">
+          <svg class="h-8 w-8 text-slate-500" fill="none" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 7h12l-1 12H7L6 7Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 7a3 3 0 0 1 6 0"/>
+          </svg>
+          <span class="absolute inset-0 animate-pulse-glow rounded-full bg-neon-pink/10"></span>
+        </div>
+        <p class="mt-5 font-display text-base font-semibold text-white">Tu carrito está apagado</p>
+        <p class="mt-1.5 max-w-[240px] text-sm text-slate-500">Añade una lámpara, un robot o un proyector y empieza a jugar con la luz.</p>
+        <button type="button" class="btn-ghost mt-6" (click)="goToCatalog()">Ver el catálogo</button>
+      </div>
+
+      <!-- Líneas -->
+      <ul *ngIf="state?.count" class="space-y-4">
+        <li *ngFor="let line of state.lines" class="flex gap-3 rounded-2xl border border-white/8 bg-white/[0.03] p-3">
+          <img [src]="line.product.image" [alt]="line.product.name" class="h-20 w-20 shrink-0 rounded-xl object-cover" />
+          <div class="min-w-0 flex-1">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <p class="truncate text-sm font-semibold text-white">{{ line.product.name }}</p>
+                <p class="mt-0.5 text-[11px] text-slate-500">{{ line.color }}</p>
+              </div>
+              <button
+                type="button"
+                (click)="remove(line)"
+                class="shrink-0 text-slate-500 transition hover:text-neon-pink"
+                [attr.aria-label]="'Eliminar ' + line.product.name"
+              >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 7h14M9 7V5h6v2m-8 0 1 12h8l1-12"/></svg>
+              </button>
+            </div>
+
+            <div class="mt-3 flex items-center justify-between">
+              <div class="flex items-center rounded-full border border-white/12 bg-white/[0.04]">
+                <button type="button" (click)="decrement(line)" class="flex h-8 w-8 items-center justify-center text-slate-300 transition hover:text-white" aria-label="Reducir cantidad">
+                  <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 12h14"/></svg>
+                </button>
+                <span class="w-5 text-center text-xs font-semibold text-white">{{ line.qty }}</span>
+                <button type="button" (click)="increment(line)" class="flex h-8 w-8 items-center justify-center text-slate-300 transition hover:text-white" aria-label="Aumentar cantidad">
+                  <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+                </button>
+              </div>
+              <span class="text-sm font-bold text-white">{{ line.product.price * line.qty | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <!-- Cupón -->
+      <div *ngIf="state?.count" class="mt-5 border-t border-white/10 pt-4">
+        <label for="coupon" class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Código de descuento</label>
+        <div class="mt-2 flex gap-2">
+          <input
+            id="coupon"
+            type="text"
+            [(ngModel)]="couponInput"
+            placeholder="LUMI10"
+            class="min-w-0 flex-1 rounded-full border border-white/12 bg-white/[0.04] px-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:border-neon-cyan/60 focus:outline-none"
+            (keyup.enter)="applyCoupon()"
+          />
+          <button type="button" class="rounded-full border border-white/15 bg-white/[0.06] px-4 text-sm font-semibold text-white transition hover:border-neon-cyan/50" (click)="applyCoupon()">
+            Aplicar
+          </button>
+        </div>
+        <p *ngIf="couponMessage" class="mt-2 text-[11px]" [class.text-neon-pink]="couponError" [class.text-neon-lime]="!couponError">{{ couponMessage }}</p>
+        <button *ngIf="state.coupon" type="button" class="mt-2 text-[11px] text-slate-500 underline transition hover:text-white" (click)="removeCoupon()">
+          Quitar código {{ state.coupon }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Totales -->
+    <footer *ngIf="state?.count" class="border-t border-white/10 bg-ink-900/60 px-5 py-5">
+      <dl class="space-y-2 text-sm">
+        <div class="flex justify-between text-slate-400">
+          <dt>Subtotal</dt>
+          <dd class="text-slate-200">{{ state.subtotal | currency: 'EUR' : 'symbol' : '1.2-2' }}</dd>
+        </div>
+        <div *ngIf="state.discount > 0" class="flex justify-between text-neon-lime">
+          <dt>Descuento ({{ state.coupon }})</dt>
+          <dd>-{{ state.discount | currency: 'EUR' : 'symbol' : '1.2-2' }}</dd>
+        </div>
+        <div class="flex justify-between text-slate-400">
+          <dt>Envío</dt>
+          <dd [class.text-neon-lime]="state.shipping === 0">
+            {{ state.shipping === 0 ? 'Gratis' : (state.shipping | currency: 'EUR' : 'symbol' : '1.2-2') }}
+          </dd>
+        </div>
+        <div class="flex items-baseline justify-between border-t border-white/10 pt-3">
+          <dt class="font-display text-base font-semibold text-white">Total</dt>
+          <dd class="font-display text-xl font-extrabold text-white">{{ state.total | currency: 'EUR' : 'symbol' : '1.2-2' }}</dd>
+        </div>
+      </dl>
+      <button type="button" class="btn-primary mt-4 w-full" (click)="checkout()">Finalizar compra</button>
+      <p class="mt-3 text-center text-[10px] leading-relaxed text-slate-600">
+        Entorno de demostración · no se procesan pagos reales
+      </p>
+    </footer>
+  </aside>
+</div>

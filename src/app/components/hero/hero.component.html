@@ -1,0 +1,114 @@
+<section id="top" class="relative overflow-hidden pb-14 pt-32 sm:pt-36 lg:pb-20 lg:pt-44">
+  <!-- Fondo -->
+  <div class="pointer-events-none absolute inset-0 -z-10">
+    <div class="aurora aurora-a"></div>
+    <div class="aurora aurora-b"></div>
+    <div class="aurora aurora-c"></div>
+    <div class="absolute inset-0 grid-lines opacity-60"></div>
+    <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink-900 to-transparent"></div>
+  </div>
+
+  <div class="container-x grid items-center gap-14 lg:grid-cols-[1.02fr_0.98fr] lg:gap-10">
+    <!-- Texto -->
+    <div class="relative">
+      <div class="reveal is-visible inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] py-1.5 pl-1.5 pr-4 backdrop-blur">
+        <span class="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-neon-pink to-neon-violet px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white">
+          Nuevo
+        </span>
+        <span class="text-xs font-medium text-slate-300">Colección Neo Matsuri · edición limitada</span>
+      </div>
+
+      <h1 class="section-title mt-6 text-[40px] leading-[1.16] sm:text-[56px] sm:leading-[1.08] lg:text-[64px] balance">
+        La luz que convierte<br class="hidden sm:block" />
+        tu cuarto en un
+        <span class="relative inline-block">
+          <span class="text-gradient">mundo anime</span>
+          <svg class="absolute -bottom-2 left-0 w-full text-neon-pink/60" height="10" viewBox="0 0 300 10" preserveAspectRatio="none" fill="none">
+            <path d="M2 7.5C60 3 120 2.5 180 4.5s80 3 118 1.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+          </svg>
+        </span>
+      </h1>
+
+      <p class="mt-7 max-w-xl text-[17px] leading-relaxed text-slate-400">
+        Lámparas inteligentes, robots de compañía y proyectores galácticos para niños y adultos.
+        Diseño cuidado, control por app y voz, y una luz que cambia de color con tu estado de ánimo.
+      </p>
+
+      <div class="mt-9 flex flex-wrap items-center gap-3">
+        <button type="button" class="btn-primary group" (click)="scrollTo('catalogo')">
+          Explorar la colección
+          <svg class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </button>
+        <button type="button" class="btn-ghost group" (click)="scrollTo('experiencia')">
+          <svg class="h-4 w-4 text-neon-cyan" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"/><path stroke-linecap="round" d="M12 6V4M12 20v-2M6 12H4M20 12h-2"/></svg>
+          Cómo funciona
+        </button>
+      </div>
+
+      <dl class="mt-11 grid max-w-lg grid-cols-3 gap-4 border-t border-white/10 pt-7">
+        <div *ngFor="let stat of stats">
+          <dt class="font-display text-xl font-bold text-white sm:text-2xl">{{ stat.value }}</dt>
+          <dd class="mt-1 text-[11px] uppercase tracking-[0.14em] text-slate-500">{{ stat.label }}</dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Visual -->
+    <div class="relative reveal is-visible reveal-scale">
+      <div class="pointer-events-none absolute -inset-6 rounded-[3rem] bg-gradient-to-tr from-neon-pink/25 via-neon-violet/10 to-neon-cyan/25 blur-2xl"></div>
+
+      <div class="relative overflow-hidden rounded-[2rem] border border-white/12 bg-ink-800 shadow-card">
+        <img
+          src="assets/img/hero.png"
+          alt="Lámpara LED Tsukuyomi con puerta torii y robot Mochi en una habitación oscura"
+          class="h-[420px] w-full object-cover transition-transform duration-[1200ms] ease-out sm:h-[480px] lg:h-[560px]"
+          loading="eager"
+        />
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/10 to-transparent"></div>
+
+        <!-- Chip superior -->
+        <div class="float-chip absolute left-4 top-4 flex items-center gap-2 rounded-full border border-white/15 bg-ink-900/70 px-3 py-1.5 text-[11px] font-medium text-white backdrop-blur-md">
+          <span class="h-1.5 w-1.5 rounded-full bg-neon-cyan shadow-[0_0_10px_2px_rgba(34,211,238,0.9)]"></span>
+          Compatible con Alexa · Google · HomeKit
+        </div>
+
+        <!-- Tarjeta flotante de producto -->
+        <div class="float-chip float-chip-delay absolute bottom-4 left-4 right-4 flex items-center gap-3 rounded-2xl border border-white/15 bg-ink-900/80 p-3 backdrop-blur-xl sm:right-auto sm:max-w-[320px]">
+          <img [src]="featured.image" [alt]="featured.name" class="h-14 w-14 rounded-xl object-cover" />
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-sm font-semibold text-white">{{ featured.name }}</p>
+            <p class="mt-0.5 flex items-baseline gap-2">
+              <span class="text-sm font-bold text-neon-pink">{{ featured.price | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+              <span class="text-[11px] text-slate-500 line-through">{{ featured.oldPrice | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+            </p>
+          </div>
+          <button
+            type="button"
+            (click)="addFeatured()"
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-ink-900 transition hover:scale-105 hover:bg-neon-pink hover:text-white"
+            aria-label="Añadir Lámpara Tsukuyomi al carrito"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Anillo decorativo -->
+      <div class="pointer-events-none absolute -right-10 -top-10 hidden h-28 w-28 rounded-full ring-conic opacity-70 lg:block"></div>
+    </div>
+  </div>
+
+  <!-- Marquesina -->
+  <div class="marquee-wrap relative mt-16 overflow-hidden border-y border-white/10 bg-white/[0.02] py-4 lg:mt-24">
+    <div class="marquee-track mask-fade-x">
+      <div *ngFor="let copy of [0, 1]" class="flex shrink-0 items-center">
+        <ng-container *ngFor="let item of marquee">
+          <span class="flex items-center gap-3 whitespace-nowrap px-5 text-[13px] font-medium uppercase tracking-[0.16em] text-slate-400">
+            <svg class="h-3 w-3 text-neon-pink" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 7.3L22 12l-7.8 2.7L12 22l-2.2-7.3L2 12l7.8-2.7L12 2z"/></svg>
+            {{ item }}
+          </span>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,78 @@
+<section id="catalogo" class="relative scroll-mt-24 py-20 lg:py-28">
+  <div class="container-x">
+    <!-- Cabecera -->
+    <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+      <div class="max-w-2xl reveal" appReveal>
+        <span class="eyebrow">
+          <span class="h-px w-8 bg-neon-pink"></span>
+          Catálogo 2026
+        </span>
+        <h2 class="section-title mt-4 balance">Elige tu próxima obsesión luminosa</h2>
+        <p class="mt-4 text-[15px] leading-relaxed text-slate-400">
+          Ocho piezas diseñadas para convivir con la domótica de casa: se encienden con la voz, se
+          programan desde el móvil y se pueden tocar sin miedo.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3 reveal" appReveal [appRevealDelay]="120">
+        <label for="sort" class="text-xs uppercase tracking-[0.16em] text-slate-500">Ordenar</label>
+        <div class="relative">
+          <select
+            id="sort"
+            [(ngModel)]="sort"
+            class="appearance-none rounded-full border border-white/12 bg-white/[0.05] py-2.5 pl-4 pr-10 text-sm font-medium text-white outline-none transition hover:border-white/25"
+          >
+            <option *ngFor="let option of sortOptions" [ngValue]="option.id" class="bg-ink-800 text-white">{{ option.label }}</option>
+          </select>
+          <svg class="pointer-events-none absolute right-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="mt-9 flex flex-wrap items-center gap-2.5 reveal" appReveal [appRevealDelay]="80">
+      <button
+        *ngFor="let category of categories"
+        type="button"
+        class="pill"
+        [class.pill-active]="activeCategory === category.id"
+        (click)="selectCategory(category.id)"
+      >
+        {{ category.short }}
+        <span
+          class="rounded-full px-1.5 py-0.5 text-[10px] font-bold"
+          [ngClass]="activeCategory === category.id ? 'bg-ink-900/20' : 'bg-white/10'"
+        >
+          {{ countFor(category.id) }}
+        </span>
+      </button>
+
+      <span class="ml-auto hidden text-xs text-slate-500 sm:block">
+        {{ filtered.length }} {{ filtered.length === 1 ? 'producto' : 'productos' }} · envío 24/48 h
+      </span>
+    </div>
+
+    <!-- Rejilla -->
+    <div [@grid]="animationKey" class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <app-product-card
+        *ngFor="let product of filtered; let i = index"
+        [product]="product"
+        [wished]="wished.has(product.id)"
+        (quickView)="openProduct($event)"
+        (toggleWish)="toggleWish($event)"
+        class="block h-full"
+      ></app-product-card>
+    </div>
+
+    <!-- Nota de confianza -->
+    <div class="mt-10 flex flex-col items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.03] px-6 py-5 sm:flex-row">
+      <p class="flex items-center gap-3 text-sm text-slate-400">
+        <span class="flex h-9 w-9 items-center justify-center rounded-full bg-neon-lime/10 text-neon-lime">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.5 5 5 10-11"/></svg>
+        </span>
+        Todos los productos incluyen garantía de 2 años y devolución gratuita durante 30 días.
+      </p>
+      <a href="#faq" class="text-sm font-semibold text-neon-pink transition hover:text-white">Ver condiciones →</a>
+    </div>
+  </div>
+</section>
