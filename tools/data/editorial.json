@@ -1,0 +1,221 @@
+{
+  "_note": "Capa editorial de LUMIKO. Los campos comerciales (precio proveedor, MOQ, imagenes, valoracion, plazo, enlace) NO se escriben aqui: se hidratan desde la respuesta real de Alibaba.com en tools/data/batch-*.json. Aqui solo vive la curaduria: nombre comercial, textos y categoria.",
+  "products": [
+    {
+      "id": "1601207380565",
+      "cat": "lamparas",
+      "name": "Lámpara Kage 3D",
+      "tag": "Ilusión óptica anime en madera y acrílico",
+      "desc": "Lámpara de escritorio con escena anime en 3D: varias capas de acrílico grabado se separan en profundidad y la luz cálida regulable hace que la ilustración parezca flotar. Base de madera, ideal como punto de luz de mesita o regalo.",
+      "feats": ["Luz blanca cálida regulable", "Cuerpo de madera + acrílico grabado", "Efecto de profundidad por capas"],
+      "audience": "Escritorio · Regalo"
+    },
+    {
+      "id": "1601338100649",
+      "cat": "lamparas",
+      "name": "Lámpara Shoji Sound",
+      "tag": "Caja de luz anime con altavoz integrado",
+      "desc": "Caja de luz nocturna con lámina de sombra anime y altavoz incorporado: luz y sonido en un mismo objeto. Se apaga con un toque y funciona como lámpara de ambiente para habitaciones tematizadas.",
+      "feats": ["Altavoz integrado", "Lámina de sombra intercambiable", "Luz nocturna de bajo consumo"],
+      "audience": "Habitación · Coleccionistas"
+    },
+    {
+      "id": "1601578724674",
+      "cat": "lamparas",
+      "name": "Light Box Manga RGB",
+      "tag": "Marco de luz con recorte de papel y color RGB",
+      "desc": "Marco de sombra tipo manga con recorte de papel en varias capas y retroiluminación RGB. Cambia de color para adaptar la escena al tono de la habitación o al momento del día.",
+      "feats": ["Retroiluminación RGB", "Recorte de papel en capas", "Formato marco para pared o estante"],
+      "audience": "Decoración · Regalo"
+    },
+    {
+      "id": "1601195203220",
+      "cat": "lamparas",
+      "name": "Caja de Luz Slayer",
+      "tag": "Escena anime con figura y luz nocturna",
+      "desc": "Caja de luz con figura de acción y escena de papel recortado, pensada como pieza de colección y luz nocturna a la vez. Incluye personalización de la escena al hacer el pedido al proveedor.",
+      "feats": ["Figura de acción incluida", "Escena de papel recortado", "Uso como luz nocturna"],
+      "audience": "Coleccionistas · Regalo"
+    },
+    {
+      "id": "1600681042718",
+      "cat": "lamparas",
+      "name": "Luz Nocturna Miku",
+      "tag": "Figura luminosa de edición coleccionista",
+      "desc": "Luz nocturna con figura de personaje anime iluminada desde la base. Pieza de vitrina que además funciona como punto de luz tenue para la mesilla.",
+      "feats": ["Figura iluminada desde la base", "Formato vitrina", "Luz tenue para mesilla"],
+      "audience": "Coleccionistas"
+    },
+    {
+      "id": "1601445304848",
+      "cat": "lamparas",
+      "name": "Neón Flex IP65",
+      "tag": "Neón LED de 6 mm personalizable, apto exterior",
+      "desc": "Neón LED flexible de 6 mm de grosor, alta luminosidad y protección IP65: se puede usar en interior y en exterior. Se personaliza el diseño y el color al hacer el pedido al proveedor.",
+      "feats": ["Protección IP65 (exterior)", "Grosor de 6 mm", "Diseño y color personalizables"],
+      "audience": "Exterior · Cartel"
+    },
+    {
+      "id": "1601584938093",
+      "cat": "lamparas",
+      "name": "Cuadro Luminoso Anime",
+      "tag": "Lámina de acrílico iluminada a medida",
+      "desc": "Cuadro de acrílico iluminado con ilustración anime, con opción de personalizar la imagen. Funciona como pieza de pared con luz propia, sin necesidad de lámpara adicional.",
+      "feats": ["Acrílico iluminado", "Imagen personalizable", "Montaje en pared"],
+      "audience": "Decoración"
+    },
+    {
+      "id": "1601016176020",
+      "cat": "robots",
+      "name": "Robot Nova Voz",
+      "tag": "Robot interactivo con voz y sensor táctil",
+      "desc": "Robot de compañía para niños con control por voz y sensor táctil: responde a órdenes sencillas y a las caricias. Movimiento motorizado y luces, sin pantallas ni suscripciones.",
+      "feats": ["Control por voz", "Sensor táctil en cabeza", "Movimiento y luces LED"],
+      "audience": "Infantil · 6+"
+    },
+    {
+      "id": "1601355503678",
+      "cat": "robots",
+      "name": "Robot KK Gesture",
+      "tag": "Juguete inteligente que responde a gestos",
+      "desc": "Robot de juguete con detección de gestos: cambia de comportamiento según el movimiento de la mano. Plástico resistente y mandos simples, pensado para manos pequeñas.",
+      "feats": ["Detección de gestos", "Cuerpo de plástico resistente", "Mando sencillo"],
+      "audience": "Infantil · 5+"
+    },
+    {
+      "id": "1600767640275",
+      "cat": "robots",
+      "name": "Robot Fiesta",
+      "tag": "Baila, canta y responde al tacto",
+      "desc": "Robot educativo que baila, canta y reacciona al tacto. Pensado para juego activo en casa: combina sonido, movimiento y luces en un solo juguete.",
+      "feats": ["Modo baile y canto", "Respuesta táctil", "Luces y sonido"],
+      "audience": "Infantil · 4+"
+    },
+    {
+      "id": "1601720450148",
+      "cat": "robots",
+      "name": "Robot Tutor IA",
+      "tag": "Compañero de aprendizaje con IA",
+      "desc": "Robot interactivo con IA orientado al aprendizaje: conversación y actividades guiadas para niños. Se entrega como set completo, listo para usar.",
+      "feats": ["Interacción con IA", "Orientado a aprendizaje", "Set completo"],
+      "audience": "Infantil · Educativo"
+    },
+    {
+      "id": "1601905919359",
+      "cat": "robots",
+      "name": "Robot Pulse IA",
+      "tag": "Voz interactiva, baile y luces",
+      "desc": "Robot con IA y control por voz que baila y acompaña el juego. Combina respuesta conversacional con movimiento y luz ambiental.",
+      "feats": ["Control por voz", "Modo baile", "Luz ambiental LED"],
+      "audience": "Infantil · 6+"
+    },
+    {
+      "id": "1601693524041",
+      "cat": "robots",
+      "name": "Robot DeepSeek Kids",
+      "tag": "Asistente IA conversacional para niños",
+      "desc": "Robot de juguete con IA conversacional (DeepSeek) pensado para que los niños pregunten y conversen. Sin pantallas: la interacción es por voz.",
+      "feats": ["IA conversacional DeepSeek", "Interacción por voz", "Sin pantallas"],
+      "audience": "Infantil · Educativo"
+    },
+    {
+      "id": "1601062078576",
+      "cat": "proyeccion",
+      "name": "Proyector Astro Galaxia",
+      "tag": "Astronauta que proyecta galaxia y estrellas",
+      "desc": "Proyector con forma de astronauta que llena el techo de nebulosa y estrellas. Luz nocturna de ambiente para dormitorio infantil o salón.",
+      "feats": ["Nebulosa + estrellas", "Diseño astronauta", "Luz nocturna de ambiente"],
+      "audience": "Dormitorio · Infantil"
+    },
+    {
+      "id": "1601630850823",
+      "cat": "proyeccion",
+      "name": "Proyector Nebula 15",
+      "tag": "15 modos de color con ruido blanco",
+      "desc": "Proyector de galaxia con 15 modos de color y generador de ruido blanco: ambiente y sonido relajante en el mismo aparato. Pensado para conciliar el sueño.",
+      "feats": ["15 modos de color", "Ruido blanco integrado", "Luz nocturna regulable"],
+      "audience": "Dormitorio · Descanso"
+    },
+    {
+      "id": "1601584572330",
+      "cat": "proyeccion",
+      "name": "Proyector Smart Nebula",
+      "tag": "Galaxia de techo controlada por app",
+      "desc": "Proyector de nebulosa con control por app: elige color, intensidad y temporizador desde el móvil. Proyección de techo pensada para habitaciones grandes.",
+      "feats": ["Control por app", "Temporizador", "Proyección de techo"],
+      "audience": "Salón · Dormitorio"
+    },
+    {
+      "id": "1601887991399",
+      "cat": "proyeccion",
+      "name": "Proyector Cine 12",
+      "tag": "12 películas intercambiables de galaxia",
+      "desc": "Proyector de galaxia con 12 películas intercambiables para cambiar de escena sin comprar otro aparato. Formato compacto de sobremesa.",
+      "feats": ["12 películas incluidas", "Cambio de escena por lente", "Formato compacto"],
+      "audience": "Dormitorio · Regalo"
+    },
+    {
+      "id": "1601495338796",
+      "cat": "proyeccion",
+      "name": "Proyector Comet",
+      "tag": "Nebulosa con mando a distancia",
+      "desc": "Proyector de estrellas tipo nebulosa con mando a distancia: color y velocidad de rotación sin levantarse. Luz de ambiente para cualquier estancia.",
+      "feats": ["Mando a distancia", "Rotación regulable", "Modo nebulosa"],
+      "audience": "Salón · Dormitorio"
+    },
+    {
+      "id": "1601877725992",
+      "cat": "proyeccion",
+      "name": "Proyector Orbit 360",
+      "tag": "Estrellas giratorias de 360°",
+      "desc": "Proyector de estrellas con giro de 360° y efecto galaxia. Pieza compacta que convierte cualquier techo en un cielo en movimiento.",
+      "feats": ["Giro de 360°", "Efecto galaxia", "Compacto"],
+      "audience": "Dormitorio · Infantil"
+    },
+    {
+      "id": "1601570587245",
+      "cat": "gaming",
+      "name": "Panel Pixoo 16",
+      "tag": "Marco LED de píxeles 16×16 con app",
+      "desc": "Marco digital de 16×16 píxeles para dibujar y reproducir pixel art. Se controla desde la app y sirve como reloj, cartel o animación de escritorio.",
+      "feats": ["Matriz de 16×16 píxeles", "Control por app", "Editor de pixel art"],
+      "audience": "Escritorio · Gaming"
+    },
+    {
+      "id": "1601651981189",
+      "cat": "gaming",
+      "name": "Panel Pixoo 64",
+      "tag": "Pantalla LED 64×64 conectada a la nube",
+      "desc": "Pantalla LED de 64×64 píxeles con conexión wifi y contenido en la nube. Resolución cuatro veces mayor que el modelo de 16×16, para animaciones más detalladas.",
+      "feats": ["Matriz de 64×64 píxeles", "Contenido en la nube", "Conexión wifi"],
+      "audience": "Gaming · Decoración"
+    },
+    {
+      "id": "1601090549156",
+      "cat": "gaming",
+      "name": "Marco Pixel 32",
+      "tag": "Marco de fotos LED programable 32×32",
+      "desc": "Marco de fotos digital con matriz LED de píxeles programable. Sube tus propias imágenes y animaciones para mostrarlas en la pared.",
+      "feats": ["Matriz de 32×32 píxeles", "Imágenes programables", "Formato marco"],
+      "audience": "Decoración · Gaming"
+    },
+    {
+      "id": "1601731245913",
+      "cat": "gaming",
+      "name": "Pantalla Pixel 24×48",
+      "tag": "Panel LED inteligente en formato panorámico",
+      "desc": "Marco LED inteligente con matriz de 24×48 píxeles en formato panorámico, para textos y animaciones horizontales. Se cuelga o se apoya.",
+      "feats": ["Matriz de 24×48 píxeles", "Formato panorámico", "Pared o sobremesa"],
+      "audience": "Gaming · Escaparate"
+    },
+    {
+      "id": "1601634973357",
+      "cat": "gaming",
+      "name": "Marco Pixel BT",
+      "tag": "16×16, 32×32 y 64×64 con Bluetooth",
+      "desc": "Marco de fotos LED disponible en tres matrices (16×16, 32×32 y 64×64) con conexión Bluetooth. Elige el tamaño según el espacio y el nivel de detalle que quieras.",
+      "feats": ["Tres tamaños de matriz", "Conexión Bluetooth", "Contenido personalizable"],
+      "audience": "Gaming · Regalo"
+    }
+  ]
+}

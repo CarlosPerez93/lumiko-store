@@ -1,31 +1,55 @@
 # LUMIKO · Smart Play
 
 Tienda online de **juguetes domotizados y lámparas inteligentes de anime** para niños y adultos.
-Proyecto real y funcional: catálogo con filtros, vista rápida, carrito persistente, cupones y checkout de demostración.
+Angular 12 + Tailwind 3, catálogo multiproveedor con 24 productos reales de Alibaba.com, carrito persistente, cupones, checkout con **Stripe Checkout** y página de confirmación de pedido con estados de pago reales.
 
-![stack](https://img.shields.io/badge/Angular-12.2.17-DD0031) ![stack](https://img.shields.io/badge/Tailwind-3.4-38BDF8) ![stack](https://img.shields.io/badge/TypeScript-4.3-3178C6)
+![stack](https://img.shields.io/badge/Angular-12.2.17-DD0031) ![stack](https://img.shields.io/badge/Tailwind-3.4-38BDF8) ![stack](https://img.shields.io/badge/TypeScript-4.3-3178C6) ![stack](https://img.shields.io/badge/Stripe-Checkout-635BFF) ![stack](https://img.shields.io/badge/Netlify-Functions-00C7B7)
 
 ---
 
-## 1. Arrancar la tienda
+## 0. Estado de producción (24 oct 2026)
+
+| Comprobación | Resultado |
+|---|---|
+| Sitio | https://lumiko-store.netlify.app (deploy `6adcc00209f098169532574f`) |
+| Arnés `node tools/verify-production.js` | **34/34 correctas, 0 fallos** |
+| Rutas SPA (`/`, `/catalogo`, `/carrito`, `/checkout`, `/pedido`, `/producto/:id`, 404) | todas 200, router sirviendo la app |
+| Responsive a 375×812 (`/carrito` vacío y lleno, `/checkout`, `/pedido`, `/404`, `/catalogo`) | `scrollWidth` = `clientWidth` en todas: **sin overflow horizontal** |
+| Cabeceras de seguridad, Functions, validaciones y metadatos | correctas |
+| Cobro real | **pendiente de claves de Stripe**: hoy el checkout responde `503 payments_not_configured` con un mensaje de negocio, sin filtrar detalles internos |
+
+Los dos únicos puntos abiertos del mandato son los que dependen de credenciales
+externas: `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` (sección 6) para cerrar el
+pago real, y el dominio propio (sección 11), que el mandato deja como «si corresponde».
+
+---
+
+## 1. Arrancar en local
 
 ```bash
-cd lumiko-store
-npm install       # ya está instalado en este equipo
-npm start         # http://localhost:4200
+npm install                 # dependencias
+npm run catalog:export      # snapshot del catálogo para las Functions
+npm start                   # http://localhost:4200
+```
+
+Para probar también las Netlify Functions (pagos) en local:
+
+```bash
+npx netlify dev             # http://localhost:8888, redirige Functions y SPA
 ```
 
 Build de producción:
 
 ```bash
-npm run build     # genera dist/lumiko
+npm run build               # prebuild exporta el catálogo y compila en dist/lumiko
+npm run verify:backend      # 31 comprobaciones de reglas comerciales y errores
 ```
 
-> El proyecto ya incluye un `.npmrc` con dos ajustes necesarios:
+> El proyecto incluye un `.npmrc` con dos ajustes necesarios:
 > - `node-options=--openssl-legacy-provider`, porque Angular 12 usa webpack 5.52 (hash md4) y Node 17+ exige el proveedor legacy de OpenSSL.
 > - `legacy-peer-deps=true`, porque Angular 12 declara `tailwindcss@^2` como peer opcional y aquí usamos Tailwind 3.
 >
-> Si trabajas con Node 16 no necesitas el primer ajuste.
+> La línea `"wmic.exe" no se reconoce…` que aparece en cada build es ruido del CLI en Windows: no afecta al resultado.
 
 ## 2. Stack
 
@@ -33,73 +57,183 @@ npm run build     # genera dist/lumiko
 |---|---|---|
 | Framework | Angular 12.2.17 (NgModules) | versión pedida, arquitectura clásica con módulos |
 | Estilos | Tailwind CSS 3.4 + `@layer` propio | sistema de diseño con tokens, sin CSS muerto |
-| Animaciones | `@angular/animations` + CSS keyframes + IntersectionObserver | ver sección 5 |
+| Animaciones | `@angular/animations` + CSS keyframes + IntersectionObserver | ver sección 6 |
 | Estado | RxJS `BehaviorSubject` + `combineLatest` | carrito único, sin librería extra |
-| Tipografía | Sora (display) + Inter (texto) | Google Fonts, precargadas |
-| Imágenes | Set generado a medida (1 hero + 8 productos) | estudio oscuro coherente, formato PNG |
+| Catálogo | Adaptadores de proveedor + `InjectionToken` multi | crece sin tocar componentes (sección 4) |
+| Pagos | Stripe Checkout + Netlify Functions | el importe se recalcula en servidor |
+| Despliegue | Netlify (build, Functions, contextos) | un solo proveedor para SPA y backend |
 
-## 3. Estructura
+## 3. Rutas
+
+| Ruta | Página | Notas |
+|---|---|---|
+| `/` | Inicio | hero, destacados, experiencia, FAQ |
+| `/catalogo` | Catálogo | filtros por categoría, búsqueda y ordenación |
+| `/producto/:id` | Detalle | galería, especificaciones, disponibilidad, proveedor de origen |
+| `/carrito` | Carrito | cantidades, cupones, envío gratis desde 49 € |
+| `/checkout` | Checkout | formulario validado + redirección a Stripe |
+| `/pedido` | Confirmación | estados `paid` / `unpaid` / `processing`, sondeo automático |
+| `/404` y `**` | No encontrado | manejo de rutas inexistentes |
+
+Las rutas usan `scrollPositionRestoration` y `anchorScrolling`; los títulos por ruta están en `data.title`.
+**No hay autenticación**: el mandato la pedía «si es necesaria» y no lo es para comprar como invitado (Stripe recoge el correo y la dirección). Ver «próximos pasos».
+
+## 4. Arquitectura del catálogo (crecer sin rehacer la app)
 
 ```
-src/
-├─ app/
-│  ├─ core/                 # dominio y estado
-│  │  ├─ product.model.ts   # tipos + categorías
-│  │  ├─ products.data.ts   # catálogo editable (8 productos)
-│  │  ├─ cart.service.ts    # carrito, cupones, envío, persistencia
-│  │  └─ toast.service.ts   # notificaciones
-│  ├─ shared/
-│  │  ├─ animations.ts      # triggers reutilizables
-│  │  └─ reveal.directive.ts# aparición al hacer scroll
-│  ├─ components/
-│  │  ├─ header/  hero/  catalog/  product-card/
-│  │  ├─ product-detail/  cart-drawer/
-│  │  └─ experience/  social/  footer/  toast/
-│  └─ app.module.ts
-├─ assets/img/              # hero + 8 fotos de producto
-├─ styles.css               # tokens, componentes y utilidades
-└─ tailwind.config.js       # paleta neón, fuentes, keyframes
+SupplierProduct            forma cruda del proveedor (precio, MOQ, imágenes, proveedor…)
+      │
+ProductSourceAdapter       { meta, load(): Observable<SupplierProduct[]> }
+      │
+CATALOG_SOURCES (token)    registro multi: un adaptador por proveedor
+      │
+CatalogService             normaliza a Product, deduplica, filtra y calcula estadísticas
 ```
 
-## 4. Qué hace la tienda
+**Añadir un proveedor = 2 pasos:**
 
-- **Catálogo** de 8 productos (lámparas, robots, proyección, gaming) con filtro por categoría, contador por píldora y ordenación (más vendidos, precio, novedades, valoración).
-- **Vista rápida** en modal: galería, acabados, quantity stepper, especificaciones, garantía y añadir al carrito.
-- **Carrito lateral** con cantidades, eliminación, barra de progreso hacia el envío gratis (49 €), cupones `LUMI10` (-10 %) y `ANIME15` (-15 %), y resumen de totales.
-- **Persistencia** del carrito en `localStorage` (`lumiko.cart.v1`), validando productos y acabados al recuperar.
-- **Checkout de demostración**: no hay pasarela de pago conectada; muestra un aviso al confirmar.
-- **Wishlist** local por producto, newsletter con validación por expresión regular, FAQ en acordeón, toast de confirmación.
-- **Accesibilidad**: foco visible, `aria-label`/`aria-expanded` en controles, cierre con `Escape`, bloqueo de scroll del documento con overlays abiertos y soporte de `prefers-reduced-motion`.
+1. Crear `src/app/core/catalog/mi-proveedor/mi-proveedor.source.ts` implementando `ProductSourceAdapter`.
+2. Añadir una línea en `app.module.ts`:
 
-## 5. Animaciones (cómo están hechas)
+```ts
+{ provide: CATALOG_SOURCES, useValue: new MiProveedorSource(), multi: true }
+```
+
+Nada más: `CatalogService` aplana los proveedores registrados y la UI no cambia. Si un adaptador falla, el catálogo sigue funcionando con los demás.
+
+**Precio de venta:** no viene del proveedor. `src/app/core/catalog/pricing.ts` aplica la política de LUMIKO (`margen 2,6`, mínimo 12,90 €, redondeo a 0,10 €) sobre el coste mayorista. Cambiar la política recalcula todo el catálogo.
+
+## 5. Proveedores integrados
+
+| Proveedor | Adaptador | Productos | Datos |
+|---|---|---|---|
+| Alibaba.com | `core/catalog/alibaba/alibaba.source.ts` | 24 | precio mayorista, MOQ, imágenes, valoraciones, proveedor verificado, país y URL de origen |
+
+Los datos en bruto viven en `tools/data/batch-a.json` y `tools/data/batch-b.json`; `tools/generate-catalog.js` los normaliza a `src/app/core/catalog/data/alibaba.products.ts` y `tools/export-catalog.js` genera el snapshot en céntimos que consume el backend (`netlify/functions/_lib/catalog.json`, no versionado).
+
+Cada ficha muestra el proveedor de origen y enlaza a su página real; el precio de venta es el de LUMIKO.
+
+## 6. Pagos (Stripe Checkout)
+
+```
+Navegador                 Netlify Function                Stripe
+   │  POST items+customer ─────► create-checkout-session
+   │                             ├─ recalcula el pedido (céntimos)
+   │                             ├─ crea/reutiliza cupón
+   │                             └─ crea Checkout Session ─────► sesión
+   │  ◄──────────── { id, url } ─┘
+   │  redirección a Stripe ──────────────────────────────────► pago
+   │                                                              │
+   │                                                    webhook (firmado)
+   │                             stripe-webhook ◄──────────────────┘
+   │                             └─ anota lumiko_status en la sesión
+   │  GET /pedido?session_id=… ─► get-order ─► estado real del pago
+```
+
+- **El importe nunca lo fija el navegador**: `create-checkout-session` resuelve cada `id` contra el snapshot del catálogo y recalcula subtotal, descuento y envío en céntimos.
+- **Sin base de datos**: la sesión de Stripe es el registro del pedido; el webhook añade `lumiko_status`, `lumiko_event` y `lumiko_updated_at` a su metadata.
+- **Cupones**: Stripe no admite descuentos ad-hoc, así que se crea un cupón con id determinista `LUMIKO_<CODIGO>` (`duration: once`).
+- **Seguridad**: la firma se verifica con `stripe.webhooks.constructEvent`; una firma inválida devuelve `400 invalid_signature` y no se procesa nada. Los secretos solo viven en variables de entorno.
+- **Estados**: `checkout.session.completed` y `async_payment_succeeded` → confirmado; `async_payment_failed` → fallido; `expired` → expirado.
+
+### Variables de entorno
+
+Se definen en Netlify (Site settings → Environment variables) o en un `.env` local para `netlify dev`. Plantilla en `.env.example`; **nunca** se versionan valores reales.
+
+| Variable | Obligatoria | Uso |
+|---|---|---|
+| `STRIPE_SECRET_KEY` | sí | clave secreta de Stripe (test o live). Sin ella el checkout responde `503 payments_not_configured` |
+| `STRIPE_WEBHOOK_SECRET` | sí | secreto de firma del endpoint `/.netlify/functions/stripe-webhook` |
+| `PUBLIC_SITE_URL` | recomendada | URL canónica para `success_url` / `cancel_url` |
+| `LUMIKO_ENV` | automática | `production` / `preview` / `branch`, fijada en `netlify.toml` |
+
+### Configurar el webhook en Stripe
+
+1. Stripe Dashboard → Developers → Webhooks → *Add endpoint*.
+2. URL: `https://<tu-sitio>.netlify.app/.netlify/functions/stripe-webhook`.
+3. Eventos: `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `checkout.session.expired`, `payment_intent.payment_failed`.
+4. Copiar el *signing secret* (`whsec_…`) a `STRIPE_WEBHOOK_SECRET` y volver a desplegar.
+
+## 7. Despliegue en Netlify
+
+`netlify.toml` ya define todo:
+
+```toml
+[build]
+  command = "npm run build"      # prebuild regenera el snapshot del catálogo
+  publish = "dist/lumiko"
+  functions = "netlify/functions"
+```
+
+- `NODE_VERSION=20` + `NODE_OPTIONS=--openssl-legacy-provider` para que Angular 12 compile en Netlify.
+- Redirección SPA `/* → /index.html 200` (las Functions tienen prioridad).
+- Cabeceras de seguridad (`nosniff`, `DENY`, `Referrer-Policy`, `Permissions-Policy`) y `Cache-Control: no-store` en las Functions.
+
+```bash
+npx netlify login          # una vez
+npx netlify sites:create --name lumiko-store
+npx netlify deploy --build --prod
+```
+
+El sitio está publicado en **https://lumiko-store.netlify.app** con despliegue manual
+desde local (el proyecto Netlify **no** está enlazado al repositorio Git todavía, por
+lo que un `git push` no dispara build). Para activar el despliegue continuo hay que
+importar `https://github.com/CarlosPerez93/lumiko-store` desde la UI de Netlify
+(*Project configuration → Build & deploy → Link repository*) y dejar `main` como rama
+de producción y `dev` como rama de previsualización, con los mismos ajustes de
+`netlify.toml`. Mientras no se enlace, el comando de publicación es:
+
+```bash
+npx netlify deploy --build --prod   # compila, sube dist/lumiko y las Functions
+```
+
+## 8. Flujo de trabajo Git
+
+```
+main        ●── baseline ──────────────────────────────● release (tag v1.0.1)
+             \                                       /
+dev           ●────────────● merge feat/storefront-v1
+                            \                        /
+feat/storefront-v1           ● chore → catalog → storefront → payments
+```
+
+- Ramas de trabajo por funcionalidad (`feat/…`), integración en `dev` con `merge --no-ff` y promoción a `main` solo tras verificar en producción.
+- Commits atómicos en imperativo y con ámbito: `feat(catalog):`, `feat(payments):`, `chore(repo):`.
+- Etiquetas: `v1.0.0` en el primer estado funcional desplegado y `v1.0.1` en las correcciones salidas de la verificación en producción.
+- Detalle de cambios en [CHANGELOG.md](CHANGELOG.md).
+
+## 9. Animaciones
 
 | Efecto | Implementación |
 |---|---|
 | Aurora de fondo, grid, blobs | CSS keyframes `aurora`, `floatSoft`, `spinSlow` |
 | Marquesina de beneficios | `.marquee-track` con `animation: marquee` y pausa al hover |
-| Aparición por scroll | `appReveal` (IntersectionObserver) + clases `.reveal` / `is-visible`, con retardo por `--reveal-delay` |
+| Aparición por scroll | `appReveal` (IntersectionObserver) + clases `.reveal` / `is-visible`, retardo por `--reveal-delay` |
 | Drawer del carrito | trigger `drawerAnimation` (`transform` + easing `cubic-bezier(.16,1,.3,1)`) |
-| Backdrop | `backdropAnimation` (fade) |
 | Modal de producto | `modalAnimation` (scale + translate + fade) |
 | Badge del carrito | `popAnimation` al cambiar la cantidad |
 | Acordeón FAQ | `accordionAnimation` (height + opacity) |
 | Rejilla del catálogo | `gridAnimation` al cambiar de filtro |
-| Botones y tarjetas | barrido de brillo en `.btn-primary::after`, elevación y glow en hover |
 
 Todo el movimiento se desactiva con `@media (prefers-reduced-motion: reduce)`.
 
-## 6. Personalizar
+## 10. Personalizar
 
-- **Productos, precios y stock**: `src/app/core/products.data.ts`.
-- **Colores, fuentes y keyframes**: `src/tailwind.config.js`.
-- **Cupones y umbral de envío gratis**: constantes `COUPONS`, `FREE_SHIPPING` y `SHIPPING_COST` en `cart.service.ts`.
-- **Copy de secciones**: cada componente tiene su `.html` en `src/app/components/<seccion>/`.
+- **Política de precios**: `src/app/core/catalog/pricing.ts`.
+- **Productos de un proveedor**: `src/app/core/catalog/data/alibaba.products.ts` (o los `tools/data/*.json` + `npm run catalog:build`).
+- **Cupones y envío**: constantes `COUPONS`, `FREE_SHIPPING` y `SHIPPING_COST` en `src/app/core/cart.service.ts` — y su espejo en el snapshot (`tools/export-catalog.js`), que es el que manda en el cobro.
+- **Colores, fuentes y keyframes**: `tailwind.config.js`.
+- **Países de reparto**: `COUNTRY_CODES` / `ALLOWED_COUNTRIES` en `netlify/functions/_lib/commerce.js` y el array `countries` del checkout.
 
-## 7. Verificación
+## 11. Próximos pasos
 
-- `npm run build` compila en producción: 481 kB (ES2017) iniciales, sin errores ni warnings de presupuesto.
-- Revisión visual automatizada en 1440×900 y 390×844: 0 errores de consola, 9/9 imágenes cargadas, sin desbordes horizontales y 20/20 bloques revelados tras el scroll.
+1. **Claves de Stripe** en Netlify y alta del webhook (sección 6) para activar cobros reales.
+2. **Dominio propio** (`lumiko.shop` o similar) con DNS en Netlify y HTTPS automático.
+3. **Autenticación** solo si se quiere historial de pedidos: hoy el pedido se consulta por `session_id` y el correo de Stripe es la confirmación.
+4. **Base de datos** (Netlify Blobs, Supabase o Postgres) cuando haga falta stock, panel de pedidos o facturas: hoy Stripe es el registro.
+5. **Más proveedores**: segundo adaptador (p. ej. un distribuidor europeo) para acortar plazos de entrega.
+6. **Precios y stock automáticos**: sustituir el snapshot estático por una sincronización programada con el catálogo del proveedor.
 
 ---
 
-© 2026 LUMIKO · Proyecto de demostración. Marcas, testimonios y datos de producto son ficticios; no se procesan pagos reales.
+© 2026 LUMIKO · Marcas y datos de producto pertenecen a sus proveedores; los precios de venta son la política comercial de LUMIKO.

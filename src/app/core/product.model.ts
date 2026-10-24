@@ -1,30 +1,58 @@
+import { SupplierTerms } from './catalog/supplier-product.model';
+
 export type CategoryId = 'lamparas' | 'robots' | 'proyeccion' | 'gaming';
 
-export interface ColorOption {
-  name: string;
-  hex: string;
+/**
+ * Condiciones comerciales del proveedor que originan el producto.
+ * Se muestran en la ficha para que el comprador sepa qué está adquiriendo,
+ * con qué MOQ trabaja el fabricante y de dónde sale la referencia.
+ */
+export interface ProductSupplier extends SupplierTerms {
+  moq: number;
+  moqLabel: string;
+  unit: string;
+  priceMin: number;
+  priceMax: number;
+  currency: string;
+  quantityPrices: { minQty: number; maxQty: number | null; price: number }[];
+  /** Enlace público al producto en el marketplace del proveedor. */
+  productUrl: string;
 }
 
+/**
+ * Producto tal y como lo consume la tienda.
+ * Es agnóstico del proveedor: cualquier adaptador debe producir esta forma.
+ */
 export interface Product {
+  /** Slug estable para /producto/:id */
   id: string;
   name: string;
   tagline: string;
   category: CategoryId;
+  /** Precio de venta LUMIKO. Se calcula en pricing.ts, no viene del proveedor. */
   price: number;
-  oldPrice?: number;
+  supplierPriceMin: number;
+  supplierPriceMax: number;
+  currency: string;
   image: string;
+  images: string[];
+  /** Valoración pública del PROVEEDOR, no del producto. */
   rating: number;
-  reviews: number;
   badge?: string;
   badgeTone?: 'pink' | 'cyan' | 'lime';
   description: string;
   features: string[];
   specs: { label: string; value: string }[];
-  colors: ColorOption[];
-  stock: number;
   isNew?: boolean;
-  bestseller?: boolean;
+  /** Unidades vendidas por el proveedor en los últimos 180 días. */
   sales: number;
+  audience: string;
+  availability: 'disponible' | 'bajo-pedido';
+  availabilityLabel: string;
+  buyUrl: string;
+  sourceId: string;
+  sourceLabel: string;
+  supplier: ProductSupplier;
 }
 
 export interface Category {
@@ -46,4 +74,10 @@ export const CATEGORY_LABEL: Record<CategoryId, string> = {
   robots: 'Robot de compañía',
   proyeccion: 'Proyección',
   gaming: 'Gaming'
+};
+
+export const BUSINESS_TYPE_LABEL: { [key: string]: string } = {
+  manufacturer: 'Fabricante',
+  trading_company: 'Comercializadora',
+  trading: 'Comercializadora'
 };

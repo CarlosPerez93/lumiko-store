@@ -1,0 +1,26 @@
+<section class="relative overflow-hidden pb-24 pt-32 sm:pt-40">
+  <div class="pointer-events-none absolute inset-0 -z-10">
+    <div class="aurora aurora-b opacity-60"></div>
+    <div class="absolute inset-0 grid-lines opacity-30"></div>
+  </div>
+
+  <div class="container-x text-center">
+    <p class="font-display text-[86px] font-extrabold leading-none text-gradient sm:text-[120px]">404</p>
+    <h1 class="section-title mt-4 text-[26px] sm:text-[34px]">Esta luz no existe (todavía)</h1>
+    <p class="mx-auto mt-3 max-w-md text-sm text-slate-400">
+      La página o el producto que buscas no está en el catálogo. Puede que el enlace haya cambiado o que la referencia
+      se haya retirado del proveedor.
+    </p>
+    <div class="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+      <a routerLink="/catalogo" class="btn-primary">Ver catálogo</a>
+      <a routerLink="/" class="btn-ghost">Volver al inicio</a>
+    </div>
+
+    <div *ngIf="suggestions.length" class="mt-16 text-left">
+      <p class="eyebrow text-center">Quizá te interese</p>
+      <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <app-product-card *ngFor="let item of suggestions; trackBy: trackById" [product]="item"></app-product-card>
+      </div>
+    </div>
+  </div>
+</section>

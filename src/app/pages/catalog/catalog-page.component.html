@@ -1,0 +1,130 @@
+<section class="relative overflow-hidden border-b border-white/10 pb-12 pt-32 sm:pt-36">
+  <div class="pointer-events-none absolute inset-0 -z-10">
+    <div class="aurora aurora-a"></div>
+    <div class="aurora aurora-b"></div>
+    <div class="absolute inset-0 grid-lines opacity-40"></div>
+  </div>
+
+  <div class="container-x">
+    <span class="eyebrow">
+      <span class="h-px w-8 bg-neon-pink"></span>
+      Catálogo real · {{ stats.products }} referencias
+    </span>
+    <h1 class="section-title mt-4 max-w-3xl balance">Todo el catálogo LUMIKO</h1>
+    <p class="mt-4 max-w-2xl text-[15px] leading-relaxed text-slate-400">
+      Selección de lámparas inteligentes de anime, robots de compañía, proyectores y accesorios
+      gaming. Los datos comerciales (precio de origen, MOQ, valoración y plazo) provienen de la
+      ficha pública del proveedor y se muestran sin editar.
+    </p>
+
+    <dl class="mt-9 grid max-w-2xl grid-cols-2 gap-4 border-t border-white/10 pt-6 sm:grid-cols-4">
+      <div>
+        <dt class="font-display text-xl font-bold text-white">{{ stats.products }}</dt>
+        <dd class="text-[11px] uppercase tracking-[0.14em] text-slate-500">productos</dd>
+      </div>
+      <div>
+        <dt class="font-display text-xl font-bold text-white">{{ stats.suppliers }}</dt>
+        <dd class="text-[11px] uppercase tracking-[0.14em] text-slate-500">proveedores</dd>
+      </div>
+      <div>
+        <dt class="font-display text-xl font-bold text-neon-lime">{{ stats.verified }}</dt>
+        <dd class="text-[11px] uppercase tracking-[0.14em] text-slate-500">verificados</dd>
+      </div>
+      <div>
+        <dt class="font-display text-xl font-bold text-white">{{ stats.minPrice | currency: 'EUR' : 'symbol' : '1.0-0' }}–{{ stats.maxPrice | currency: 'EUR' : 'symbol' : '1.0-0' }}</dt>
+        <dd class="text-[11px] uppercase tracking-[0.14em] text-slate-500">rango de precio</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<section class="py-10 lg:py-14">
+  <div class="container-x">
+    <!-- Buscador + orden -->
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div class="relative w-full lg:max-w-md">
+        <svg class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path stroke-linecap="round" d="m16 16 4 4"/></svg>
+        <input
+          type="search"
+          [(ngModel)]="term"
+          placeholder="Buscar por nombre, acabado o proveedor…"
+          aria-label="Buscar productos"
+          class="w-full rounded-full border border-white/[0.12] bg-white/[0.05] py-3 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-neon-pink/60"
+        />
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button *ngIf="term || activeCategory !== 'todos'" type="button" class="btn-ghost !py-2.5 !text-xs" (click)="clearFilters()">
+          Limpiar filtros
+        </button>
+        <label for="sort-page" class="text-xs uppercase tracking-[0.16em] text-slate-500">Ordenar</label>
+        <div class="relative">
+          <select
+            id="sort-page"
+            [(ngModel)]="sort"
+            class="appearance-none rounded-full border border-white/[0.12] bg-white/[0.05] py-2.5 pl-4 pr-10 text-sm font-medium text-white outline-none transition hover:border-white/25"
+          >
+            <option *ngFor="let option of sortOptions" [value]="option.id" class="bg-ink-800 text-white">{{ option.label }}</option>
+          </select>
+          <svg class="pointer-events-none absolute right-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categorías -->
+    <div class="mt-6 flex flex-wrap items-center gap-2.5">
+      <button
+        *ngFor="let category of categories"
+        type="button"
+        class="pill"
+        [class.pill-active]="activeCategory === category.id"
+        (click)="selectCategory(category.id)"
+      >
+        {{ category.short }}
+        <span class="rounded-full px-1.5 py-0.5 text-[10px] font-bold" [ngClass]="activeCategory === category.id ? 'bg-ink-900/20' : 'bg-white/10'">
+          {{ countFor(category.id) }}
+        </span>
+      </button>
+      <span class="ml-auto hidden text-xs text-slate-500 sm:block">
+        {{ results.length }} {{ results.length === 1 ? 'resultado' : 'resultados' }}
+      </span>
+    </div>
+
+    <!-- Rejilla -->
+    <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <app-product-card
+        *ngFor="let product of results; trackBy: trackById"
+        [product]="product"
+        [wished]="false"
+        class="block h-full"
+      ></app-product-card>
+    </div>
+
+    <!-- Sin resultados -->
+    <div *ngIf="results.length === 0" class="mt-10 rounded-3xl border border-white/10 bg-white/[0.03] px-6 py-16 text-center">
+      <p class="font-display text-lg font-semibold text-white">Sin resultados para «{{ term }}»</p>
+      <p class="mx-auto mt-2 max-w-md text-sm text-slate-400">
+        Prueba con otra palabra (por ejemplo «lámpara», «robot» o «neón») o quita los filtros.
+      </p>
+      <button type="button" class="btn-primary mt-6" (click)="clearFilters()">Ver los {{ stats.products }} productos</button>
+    </div>
+
+    <!-- Fuentes -->
+    <div class="mt-12 rounded-3xl border border-white/10 bg-white/[0.02] p-6">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Fuentes integradas</p>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div *ngFor="let source of sources" class="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4">
+          <p class="text-sm font-semibold text-white">{{ source.label }}</p>
+          <p class="mt-1 text-xs text-slate-400">
+            {{ source.products }} productos · región {{ source.region }} · tipo {{ source.kind }}
+          </p>
+          <p class="mt-1 text-[11px] text-slate-600">Sincronizado el {{ source.generatedAt }}</p>
+        </div>
+      </div>
+      <p class="mt-4 text-[11px] leading-relaxed text-slate-600">
+        Añadir un proveedor nuevo no requiere tocar la tienda: se registra un adaptador y el catálogo
+        se recompone solo. Consulta la documentación técnica del repositorio.
+      </p>
+    </div>
+  </div>
+</section>

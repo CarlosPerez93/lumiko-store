@@ -1,0 +1,209 @@
+<section class="relative overflow-hidden pb-20 pt-28 sm:pt-32 lg:pt-36">
+  <div class="pointer-events-none absolute inset-0 -z-10">
+    <div class="aurora aurora-a opacity-60"></div>
+    <div class="absolute inset-0 grid-lines opacity-40"></div>
+    <div class="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-ink-900 to-transparent"></div>
+  </div>
+
+  <div class="container-x" *ngIf="product as p">
+    <!-- Migas de pan -->
+    <nav class="flex flex-wrap items-center gap-2 text-[12px] text-slate-500" aria-label="Ruta de navegación">
+      <a routerLink="/" class="transition hover:text-white">Inicio</a>
+      <span aria-hidden="true">/</span>
+      <a routerLink="/catalogo" class="transition hover:text-white">Catálogo</a>
+      <span aria-hidden="true">/</span>
+      <a [routerLink]="['/catalogo']" [queryParams]="{ categoria: p.category }" class="transition hover:text-white">
+        {{ categoryLabels[p.category] }}
+      </a>
+      <span aria-hidden="true">/</span>
+      <span class="truncate text-slate-300">{{ p.name }}</span>
+    </nav>
+
+    <div class="mt-8 grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14">
+      <!-- Galería -->
+      <div class="reveal is-visible">
+        <div class="relative overflow-hidden rounded-[2rem] border border-white/[0.12] bg-ink-800 shadow-card">
+          <img
+            [src]="activeImage"
+            [alt]="p.name + ' — ' + p.tagline"
+            class="aspect-square w-full object-cover"
+            loading="eager"
+          />
+          <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-900/60 via-transparent to-transparent"></div>
+
+          <div class="absolute left-5 top-5 flex flex-col items-start gap-2">
+            <span *ngIf="p.badge" class="rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-widest backdrop-blur-md"
+              [ngClass]="p.badgeTone === 'lime' ? 'border-neon-lime/40 bg-neon-lime/[0.15] text-neon-lime' : 'border-white/20 bg-ink-900/70 text-white'">
+              {{ p.badge }}
+            </span>
+            <span class="rounded-full border border-white/10 bg-ink-900/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-slate-300 backdrop-blur-md">
+              {{ categoryLabels[p.category] }}
+            </span>
+          </div>
+
+          <div class="absolute bottom-5 left-5 flex items-center gap-2 rounded-full border border-white/[0.12] bg-ink-900/75 px-3 py-1.5 text-[11px] font-medium text-white backdrop-blur-md">
+            <span class="h-1.5 w-1.5 rounded-full" [ngClass]="p.availability === 'disponible' ? 'bg-neon-lime' : 'bg-neon-amber'"></span>
+            {{ p.availabilityLabel }}
+          </div>
+        </div>
+
+        <div *ngIf="p.images.length > 1" class="mt-4 grid grid-cols-5 gap-3">
+          <button
+            *ngFor="let image of p.images"
+            type="button"
+            (click)="setImage(image)"
+            class="relative overflow-hidden rounded-xl border transition-all duration-300"
+            [ngClass]="activeImage === image ? 'border-neon-pink opacity-100' : 'border-white/10 opacity-60 hover:opacity-100'"
+            [attr.aria-pressed]="activeImage === image"
+            aria-label="Ver imagen del producto"
+          >
+            <img [src]="image" [alt]="p.name" class="aspect-square w-full object-cover" loading="lazy" />
+          </button>
+        </div>
+
+        <!-- Ficha del proveedor -->
+        <div class="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">Proveedor</p>
+              <p class="mt-1 truncate font-display text-sm font-semibold text-white">{{ p.supplier.name }}</p>
+              <p class="mt-1 text-[11px] text-slate-500">
+                {{ originLabel }} · {{ businessTypeLabel }} · {{ p.supplier.yearsActive }} años en la plataforma
+              </p>
+            </div>
+            <span *ngIf="p.supplier.verified" class="shrink-0 rounded-full border border-neon-lime/40 bg-neon-lime/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-neon-lime">
+              Verificado
+            </span>
+          </div>
+
+          <dl class="mt-4 grid grid-cols-2 gap-3 text-[11px] sm:grid-cols-4">
+            <div>
+              <dt class="text-slate-500">Valoración</dt>
+              <dd class="mt-0.5 font-semibold text-amber-300">{{ p.supplier.rating }} / 5</dd>
+            </div>
+            <div>
+              <dt class="text-slate-500">MOQ</dt>
+              <dd class="mt-0.5 font-semibold text-slate-200">{{ p.supplier.moqLabel }}</dd>
+            </div>
+            <div>
+              <dt class="text-slate-500">Entrega</dt>
+              <dd class="mt-0.5 font-semibold text-slate-200">{{ p.supplier.delivery }}</dd>
+            </div>
+            <div>
+              <dt class="text-slate-500">Vendidos 180 d</dt>
+              <dd class="mt-0.5 font-semibold text-slate-200">{{ p.sales | number: '1.0-0' }}</dd>
+            </div>
+          </dl>
+
+          <a
+            [href]="p.buyUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-4 inline-flex items-center gap-1.5 text-[11px] font-semibold text-neon-cyan transition hover:text-white"
+          >
+            Ver referencia en {{ p.sourceLabel }}
+            <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14 5h5v5M19 5l-8 8M9 5H5v14h14v-4"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Contenido -->
+      <div class="reveal is-visible">
+        <p class="eyebrow">{{ p.audience }}</p>
+        <h1 class="section-title mt-3 text-[32px] leading-tight sm:text-[42px]">{{ p.name }}</h1>
+        <p class="mt-3 text-sm leading-relaxed text-slate-400">{{ p.tagline }}</p>
+
+        <div class="mt-5 flex flex-wrap items-center gap-3 text-sm">
+          <span class="flex items-center gap-1 font-semibold text-amber-300">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5L2.5 9.5l6.6-.9L12 2.6z"/></svg>
+            {{ p.rating }}
+          </span>
+          <span class="text-slate-500">valoración del proveedor</span>
+          <span class="h-1 w-1 rounded-full bg-slate-600"></span>
+          <span class="text-slate-500">{{ p.supplier.deliveryRate }} tasa de entrega</span>
+        </div>
+
+        <div class="mt-7 flex items-end gap-3">
+          <span class="font-display text-4xl font-extrabold text-white">{{ p.price | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+          <span class="pb-1 text-[11px] uppercase tracking-wider text-slate-500">IVA incluido</span>
+        </div>
+        <p class="mt-1 text-[11px] text-slate-500">
+          Precio de venta LUMIKO. Coste de referencia del proveedor:
+          {{ p.supplierPriceMin | currency: 'EUR' : 'symbol' : '1.2-2' }}–{{ p.supplierPriceMax | currency: 'EUR' : 'symbol' : '1.2-2' }}
+          / {{ p.supplier.unit }} (MOQ {{ p.supplier.moqLabel }}).
+        </p>
+
+        <p class="mt-6 text-sm leading-relaxed text-slate-300">{{ p.description }}</p>
+
+        <ul class="mt-5 space-y-2.5">
+          <li *ngFor="let feature of p.features" class="flex items-start gap-2.5 text-[13px] text-slate-300">
+            <span class="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-neon-cyan/[0.15] text-neon-cyan">
+              <svg class="h-2.5 w-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>
+            </span>
+            {{ feature }}
+          </li>
+        </ul>
+
+        <!-- Cantidad + CTA -->
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div class="flex h-12 w-fit items-center rounded-full border border-white/[0.12] bg-white/[0.04]">
+            <button type="button" (click)="changeQty(-1)" class="flex h-12 w-11 items-center justify-center text-slate-300 transition hover:text-white" aria-label="Quitar una unidad">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 12h14"/></svg>
+            </button>
+            <span class="w-7 text-center text-sm font-semibold text-white">{{ qty }}</span>
+            <button type="button" (click)="changeQty(1)" class="flex h-12 w-11 items-center justify-center text-slate-300 transition hover:text-white" aria-label="Añadir una unidad">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </div>
+
+          <button type="button" class="btn-primary flex-1" (click)="addToCart()">
+            Añadir · {{ p.price * qty | currency: 'EUR' : 'symbol' : '1.2-2' }}
+          </button>
+          <button type="button" class="btn-ghost" (click)="buyNow()">Comprar ahora</button>
+        </div>
+
+        <div class="mt-5 grid grid-cols-3 gap-2 border-t border-white/10 pt-5 text-[11px] text-slate-400">
+          <div class="flex flex-col gap-1">
+            <svg class="h-4 w-4 text-neon-cyan" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7h11v8H3zM14 10h4l3 3v2h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17.5" cy="18" r="1.6"/></svg>
+            Envío gratis desde 49 €
+          </div>
+          <div class="flex flex-col gap-1">
+            <svg class="h-4 w-4 text-neon-cyan" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3Z"/></svg>
+            Pago seguro con Stripe
+          </div>
+          <div class="flex flex-col gap-1">
+            <svg class="h-4 w-4 text-neon-cyan" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4"/></svg>
+            Devolución 14 días
+          </div>
+        </div>
+
+        <!-- Especificaciones -->
+        <div class="mt-6 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Ficha técnica y trazabilidad</p>
+          <dl class="mt-3 grid grid-cols-1 gap-y-2 text-[12px] sm:grid-cols-2 sm:gap-x-6">
+            <div *ngFor="let spec of p.specs" class="flex items-baseline justify-between gap-3 border-b border-white/5 pb-1.5">
+              <dt class="text-slate-500">{{ spec.label }}</dt>
+              <dd class="text-right font-medium text-slate-200">{{ spec.value }}</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- Relacionados -->
+    <div *ngIf="related.length" class="mt-20">
+      <div class="flex items-end justify-between gap-4">
+        <div>
+          <p class="eyebrow">Sigue explorando</p>
+          <h2 class="section-title mt-2 text-[26px] sm:text-[32px]">De la misma categoría</h2>
+        </div>
+        <a routerLink="/catalogo" class="link-muted hidden sm:inline-flex">Ver todo el catálogo</a>
+      </div>
+      <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <app-product-card *ngFor="let item of related; trackBy: trackById" [product]="item"></app-product-card>
+      </div>
+    </div>
+  </div>
+</section>

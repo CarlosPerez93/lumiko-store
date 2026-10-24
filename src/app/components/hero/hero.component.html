@@ -15,7 +15,7 @@
         <span class="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-neon-pink to-neon-violet px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white">
           Nuevo
         </span>
-        <span class="text-xs font-medium text-slate-300">Colección Neo Matsuri · edición limitada</span>
+        <span class="text-xs font-medium text-slate-300">Catálogo conectado a proveedores reales</span>
       </div>
 
       <h1 class="section-title mt-6 text-[40px] leading-[1.16] sm:text-[56px] sm:leading-[1.08] lg:text-[64px] balance">
@@ -31,7 +31,7 @@
 
       <p class="mt-7 max-w-xl text-[17px] leading-relaxed text-slate-400">
         Lámparas inteligentes, robots de compañía y proyectores galácticos para niños y adultos.
-        Diseño cuidado, control por app y voz, y una luz que cambia de color con tu estado de ánimo.
+        Catálogo con productos reales, precio de venta LUMIKO y el coste de referencia del proveedor a la vista.
       </p>
 
       <div class="mt-9 flex flex-wrap items-center gap-3">
@@ -57,36 +57,38 @@
     <div class="relative reveal is-visible reveal-scale">
       <div class="pointer-events-none absolute -inset-6 rounded-[3rem] bg-gradient-to-tr from-neon-pink/25 via-neon-violet/10 to-neon-cyan/25 blur-2xl"></div>
 
-      <div class="relative overflow-hidden rounded-[2rem] border border-white/12 bg-ink-800 shadow-card">
+      <div class="relative overflow-hidden rounded-[2rem] border border-white/[0.12] bg-ink-800 shadow-card">
         <img
           src="assets/img/hero.png"
-          alt="Lámpara LED Tsukuyomi con puerta torii y robot Mochi en una habitación oscura"
+          alt="Habitación oscura iluminada con lámparas LED de inspiración anime"
           class="h-[420px] w-full object-cover transition-transform duration-[1200ms] ease-out sm:h-[480px] lg:h-[560px]"
           loading="eager"
         />
         <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/10 to-transparent"></div>
 
         <!-- Chip superior -->
-        <div class="float-chip absolute left-4 top-4 flex items-center gap-2 rounded-full border border-white/15 bg-ink-900/70 px-3 py-1.5 text-[11px] font-medium text-white backdrop-blur-md">
+        <div class="float-chip absolute left-4 top-4 flex items-center gap-2 rounded-full border border-white/[0.15] bg-ink-900/70 px-3 py-1.5 text-[11px] font-medium text-white backdrop-blur-md">
           <span class="h-1.5 w-1.5 rounded-full bg-neon-cyan shadow-[0_0_10px_2px_rgba(34,211,238,0.9)]"></span>
-          Compatible con Alexa · Google · HomeKit
+          <ng-container *ngIf="featured as f">{{ f.supplier.verified ? 'Proveedor verificado' : 'Proveedor' }} · {{ f.sourceLabel }}</ng-container>
         </div>
 
         <!-- Tarjeta flotante de producto -->
-        <div class="float-chip float-chip-delay absolute bottom-4 left-4 right-4 flex items-center gap-3 rounded-2xl border border-white/15 bg-ink-900/80 p-3 backdrop-blur-xl sm:right-auto sm:max-w-[320px]">
-          <img [src]="featured.image" [alt]="featured.name" class="h-14 w-14 rounded-xl object-cover" />
+        <div *ngIf="featured as f" class="float-chip float-chip-delay absolute bottom-4 left-4 right-4 flex items-center gap-3 rounded-2xl border border-white/[0.15] bg-ink-900/80 p-3 backdrop-blur-xl sm:right-auto sm:max-w-[320px]">
+          <a [routerLink]="['/producto', f.id]" class="shrink-0">
+            <img [src]="f.image" [alt]="f.name" class="h-14 w-14 rounded-xl object-cover" />
+          </a>
           <div class="min-w-0 flex-1">
-            <p class="truncate text-sm font-semibold text-white">{{ featured.name }}</p>
+            <a [routerLink]="['/producto', f.id]" class="block truncate text-sm font-semibold text-white hover:text-neon-pink">{{ f.name }}</a>
             <p class="mt-0.5 flex items-baseline gap-2">
-              <span class="text-sm font-bold text-neon-pink">{{ featured.price | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-              <span class="text-[11px] text-slate-500 line-through">{{ featured.oldPrice | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+              <span class="text-sm font-bold text-neon-pink">{{ f.price | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+              <span class="text-[11px] text-slate-500">IVA incluido</span>
             </p>
           </div>
           <button
             type="button"
             (click)="addFeatured()"
             class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-ink-900 transition hover:scale-105 hover:bg-neon-pink hover:text-white"
-            aria-label="Añadir Lámpara Tsukuyomi al carrito"
+            [attr.aria-label]="'Añadir ' + f.name + ' al carrito'"
           >
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
           </button>

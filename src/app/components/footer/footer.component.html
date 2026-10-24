@@ -5,7 +5,7 @@
     <div class="grid gap-12 pb-14 lg:grid-cols-[1.4fr_2fr]">
       <!-- Marca -->
       <div>
-        <a href="#top" class="flex items-center gap-3" aria-label="LUMIKO, inicio">
+        <a routerLink="/" class="flex items-center gap-3" aria-label="LUMIKO, inicio">
           <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-neon-pink via-fuchsia-500 to-neon-violet shadow-glow">
             <svg class="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5.9 1.2.9 2V16h5.4v-.2c0-.8.3-1.5.9-2A6 6 0 0 0 12 3Z"/>
@@ -18,19 +18,19 @@
         </a>
 
         <p class="mt-5 max-w-sm text-[13px] leading-relaxed text-slate-400">
-          Juguetes domotizados y lámparas inteligentes con alma anime. Diseñamos en Barcelona
-          objetos que iluminan habitaciones y despiertan imaginación.
+          Juguetes domotizados y lámparas inteligentes de inspiración anime. Cada producto del
+          catálogo enlaza al fabricante real que lo produce.
         </p>
 
         <div class="mt-6 flex items-center gap-2">
-          <a href="#top" aria-label="Instagram" class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-slate-300 transition hover:border-neon-pink/50 hover:text-white">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="3.6"/><circle cx="17" cy="7" r="0.9" fill="currentColor" stroke="none"/></svg>
+          <a href="mailto:hola@lumiko.store" aria-label="Escríbenos" class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-slate-300 transition hover:border-neon-pink/50 hover:text-white">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path stroke-linecap="round" stroke-linejoin="round" d="m4 7 8 6 8-6"/></svg>
           </a>
-          <a href="#top" aria-label="TikTok" class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-slate-300 transition hover:border-neon-pink/50 hover:text-white">
-            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 3h-2.7v11.4a2.4 2.4 0 1 1-2.1-2.4V9.2a5.1 5.1 0 1 0 4.8 5.1V8.7a5.6 5.6 0 0 0 3.2 1V7a3.3 3.3 0 0 1-3.2-3.2Z"/></svg>
+          <a routerLink="/catalogo" aria-label="Ver catálogo" class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-slate-300 transition hover:border-neon-pink/50 hover:text-white">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h10"/></svg>
           </a>
-          <a href="#top" aria-label="YouTube" class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-slate-300 transition hover:border-neon-pink/50 hover:text-white">
-            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M21 8.2a2.8 2.8 0 0 0-2-2C17.3 5.7 12 5.7 12 5.7s-5.3 0-7 .5a2.8 2.8 0 0 0-2 2A29 29 0 0 0 2.6 12a29 29 0 0 0 .4 3.8 2.8 2.8 0 0 0 2 2c1.7.5 7 .5 7 .5s5.3 0 7-.5a2.8 2.8 0 0 0 2-2 29 29 0 0 0 .4-3.8 29 29 0 0 0-.4-3.8ZM10 15V9l5.2 3L10 15Z"/></svg>
+          <a routerLink="/carrito" aria-label="Ver carrito" class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-slate-300 transition hover:border-neon-pink/50 hover:text-white">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 7h12l-1 12H7L6 7Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 7a3 3 0 0 1 6 0"/></svg>
           </a>
         </div>
       </div>
@@ -41,7 +41,18 @@
           <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">{{ column.title }}</p>
           <ul class="mt-4 space-y-2.5">
             <li *ngFor="let link of column.links">
-              <a [href]="link.href" class="text-[13px] text-slate-400 transition-colors duration-300 hover:text-white">{{ link.label }}</a>
+              <a
+                *ngIf="!link.href"
+                [routerLink]="link.path"
+                [fragment]="link.fragment"
+                [queryParams]="link.queryParams"
+                class="text-[13px] text-slate-400 transition-colors duration-300 hover:text-white"
+              >{{ link.label }}</a>
+              <a
+                *ngIf="link.href"
+                [href]="link.href"
+                class="text-[13px] text-slate-400 transition-colors duration-300 hover:text-white"
+              >{{ link.label }}</a>
             </li>
           </ul>
         </div>
@@ -59,23 +70,22 @@
       <div class="flex items-center gap-4 text-[11px] text-slate-500">
         <span class="flex items-center gap-1.5">
           <svg class="h-3.5 w-3.5 text-neon-lime" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3Z"/></svg>
-          Pago cifrado SSL
+          Checkout sobre TLS
         </span>
         <span class="flex items-center gap-1.5">
           <svg class="h-3.5 w-3.5 text-neon-lime" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>
-          Garantía 2 años
+          Webhook firmado
         </span>
       </div>
     </div>
 
     <!-- Legal -->
     <div class="flex flex-col gap-3 border-t border-white/10 py-6 text-[11px] text-slate-600 sm:flex-row sm:items-center sm:justify-between">
-      <p>© {{ year }} LUMIKO Studio S.L. · Diseñado en Barcelona</p>
+      <p>© {{ year }} LUMIKO · Catálogo con datos públicos de proveedores</p>
       <div class="flex flex-wrap items-center gap-4">
-        <a href="#top" class="transition hover:text-slate-300">Aviso legal</a>
-        <a href="#top" class="transition hover:text-slate-300">Privacidad</a>
-        <a href="#top" class="transition hover:text-slate-300">Cookies</a>
-        <span class="rounded-full border border-white/10 px-2 py-0.5 text-slate-500">Demo · sin pagos reales</span>
+        <a routerLink="/" fragment="faq" class="transition hover:text-slate-300">Envíos y devoluciones</a>
+        <a routerLink="/" fragment="faq" class="transition hover:text-slate-300">Preguntas frecuentes</a>
+        <a href="mailto:hola@lumiko.store" class="transition hover:text-slate-300">Contacto</a>
       </div>
     </div>
   </div>

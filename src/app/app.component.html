@@ -1,18 +1,11 @@
 <app-header></app-header>
 
 <main>
-  <app-hero></app-hero>
-  <app-catalog (quickView)="openProduct($event)"></app-catalog>
-  <app-experience></app-experience>
-  <app-social></app-social>
+  <router-outlet></router-outlet>
 </main>
 
 <app-footer></app-footer>
 
 <app-cart-drawer></app-cart-drawer>
-
-<ng-container *ngIf="selected$ | async as selected">
-  <app-product-detail [product]="selected" (close)="closeProduct()"></app-product-detail>
-</ng-container>
 
 <app-toast></app-toast>

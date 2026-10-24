@@ -14,3 +14,14 @@ build.log
 .idea
 .DS_Store
 Thumbs.db
+
+# snapshot generado del catalogo (se recrea con npm run catalog:export)
+/netlify/functions/_lib/catalog.json
+
+# entorno local
+.env
+.env.*
+!.env.example
+
+# Local Netlify folder
+.netlify

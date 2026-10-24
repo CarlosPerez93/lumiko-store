@@ -5,9 +5,16 @@
   "private": true,
   "scripts": {
     "start": "ng serve --configuration development --port 4200",
+    "prebuild": "npm run catalog:export",
     "build": "ng build --configuration production",
+    "prebuild:dev": "npm run catalog:export",
     "build:dev": "ng build --configuration development",
-    "serve:dist": "npx http-server dist/lumiko -p 8080 -c-1"
+    "serve:dist": "npx http-server dist/lumiko -p 8080 -c-1",
+    "catalog:build": "node tools/generate-catalog.js",
+    "catalog:export": "node tools/export-catalog.js",
+    "catalog:snapshot": "npm run catalog:build && npm run catalog:export",
+    "verify:backend": "node tools/verify-backend.js",
+    "functions:serve": "npx netlify dev"
   },
   "dependencies": {
     "@angular/animations": "~12.2.17",
@@ -19,6 +26,7 @@
     "@angular/platform-browser-dynamic": "~12.2.17",
     "@angular/router": "~12.2.17",
     "rxjs": "~6.6.7",
+    "stripe": "^23.0.1",
     "tslib": "^2.3.1",
     "zone.js": "~0.11.8"
   },
@@ -27,6 +35,7 @@
     "@angular/cli": "~12.2.17",
     "@angular/compiler-cli": "~12.2.17",
     "autoprefixer": "^10.4.16",
+    "netlify-cli": "^27.14.2",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.4.1",
     "typescript": "~4.3.5"

@@ -9,8 +9,9 @@
         </span>
         <h2 class="section-title mt-4 balance">Elige tu próxima obsesión luminosa</h2>
         <p class="mt-4 text-[15px] leading-relaxed text-slate-400">
-          Ocho piezas diseñadas para convivir con la domótica de casa: se encienden con la voz, se
-          programan desde el móvil y se pueden tocar sin miedo.
+          {{ stats.products }} productos reales de {{ stats.suppliers }} proveedores, {{ stats.verified }} de ellos
+          verificados en el marketplace. Cada ficha muestra el fabricante, su MOQ, su valoración y el enlace
+          público al producto para que puedas comprobarlo tú mismo.
         </p>
       </div>
 
@@ -20,7 +21,7 @@
           <select
             id="sort"
             [(ngModel)]="sort"
-            class="appearance-none rounded-full border border-white/12 bg-white/[0.05] py-2.5 pl-4 pr-10 text-sm font-medium text-white outline-none transition hover:border-white/25"
+            class="appearance-none rounded-full border border-white/[0.12] bg-white/[0.05] py-2.5 pl-4 pr-10 text-sm font-medium text-white outline-none transition hover:border-white/25"
           >
             <option *ngFor="let option of sortOptions" [ngValue]="option.id" class="bg-ink-800 text-white">{{ option.label }}</option>
           </select>
@@ -48,7 +49,7 @@
       </button>
 
       <span class="ml-auto hidden text-xs text-slate-500 sm:block">
-        {{ filtered.length }} {{ filtered.length === 1 ? 'producto' : 'productos' }} · envío 24/48 h
+        {{ filtered.length }} {{ filtered.length === 1 ? 'producto' : 'productos' }} · stock y plazo según proveedor
       </span>
     </div>
 
@@ -58,11 +59,15 @@
         *ngFor="let product of filtered; let i = index"
         [product]="product"
         [wished]="wished.has(product.id)"
-        (quickView)="openProduct($event)"
         (toggleWish)="toggleWish($event)"
         class="block h-full"
       ></app-product-card>
     </div>
+
+    <p *ngIf="filtered.length === 0" class="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] p-10 text-center text-sm text-slate-400">
+      No hay productos en esta categoría todavía. Prueba con otra o
+      <a routerLink="/catalogo" class="font-semibold text-neon-pink">mira el catálogo completo</a>.
+    </p>
 
     <!-- Nota de confianza -->
     <div class="mt-10 flex flex-col items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.03] px-6 py-5 sm:flex-row">
@@ -70,9 +75,9 @@
         <span class="flex h-9 w-9 items-center justify-center rounded-full bg-neon-lime/10 text-neon-lime">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.5 5 5 10-11"/></svg>
         </span>
-        Todos los productos incluyen garantía de 2 años y devolución gratuita durante 30 días.
+        Datos de proveedor verificados en Alibaba.com el 24 de octubre de 2026. Precio final con IVA incluido.
       </p>
-      <a href="#faq" class="text-sm font-semibold text-neon-pink transition hover:text-white">Ver condiciones →</a>
+      <a routerLink="/catalogo" class="text-sm font-semibold text-neon-pink transition hover:text-white">Ver catálogo completo →</a>
     </div>
   </div>
 </section>

@@ -1,0 +1,46 @@
+# Configuración de despliegue de LUMIKO en Netlify
+# Docs: https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  # `npm run build` dispara `prebuild`, que regenera el snapshot del catálogo:
+  # las Functions y la web usan exactamente los mismos precios.
+  command = "npm run build"
+  publish = "dist/lumiko"
+  functions = "netlify/functions"
+
+[build.environment]
+  # Angular 12 usa webpack 5.52 (md4): necesita el proveedor legacy de OpenSSL.
+  NODE_VERSION = "20"
+  NODE_OPTIONS = "--openssl-legacy-provider"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+# Entornos: los tres contextos de Netlify quedan etiquetados para que las
+# Functions puedan distinguirlos. Los secretos NO se escriben aquí.
+[context.production.environment]
+  LUMIKO_ENV = "production"
+
+[context.deploy-preview.environment]
+  LUMIKO_ENV = "preview"
+
+[context.branch-deploy.environment]
+  LUMIKO_ENV = "branch"
+
+# SPA con rutas de Angular: todo lo que no sea un fichero real vuelve a index.html.
+# Las Functions tienen prioridad sobre esta regla.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Cache-Control = "no-store"
