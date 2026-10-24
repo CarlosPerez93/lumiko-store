@@ -287,6 +287,14 @@ async function main() {
     assert.strictEqual(res.statusCode, 500);
     assert.strictEqual(JSON.parse(res.body).code, 'payment_gateway_error');
   });
+  await check('el error de parámetro indica el campo rechazado', () => {
+    const failure = stripeError('StripeInvalidRequestError', 'parameter_invalid_integer');
+    failure.param = 'line_items[0].price_data.unit_amount';
+    const res = silently(() => commerce.errorResponse(failure));
+    const body = JSON.parse(res.body);
+    assert.strictEqual(body.gateway_code, 'parameter_invalid_integer');
+    assert.strictEqual(body.gateway_param, 'line_items[0].price_data.unit_amount');
+  });
   await check('el error de pasarela no filtra detalles internos', () => {
     const res = silently(() => commerce.errorResponse(stripeError('StripeAuthenticationError', 'api_key_invalid')));
     assert.ok(!/sk_test|Stripe|api_key_invalid/.test(res.body), 'la respuesta filtra detalles internos');
