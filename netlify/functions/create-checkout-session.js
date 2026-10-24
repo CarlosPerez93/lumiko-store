@@ -89,7 +89,7 @@ exports.handler = async function (event) {
       return commerce.jsonResponse(503, {
         code: 'payments_not_configured',
         message:
-          'La pasarela de pago todavía no está configurada en este sitio. Añade STRIPE_SECRET_KEY en las variables de entorno de Netlify para activar los pagos.'
+          'El pago con tarjeta todavía no está activo en esta tienda. Estamos terminando de habilitarlo: vuelve a intentarlo en unos minutos o escríbenos para completar tu pedido.'
       });
     }
 
