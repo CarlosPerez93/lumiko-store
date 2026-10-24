@@ -5,6 +5,39 @@ Todos los cambios relevantes de LUMIKO se documentan en este fichero.
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/)
 y el versionado [SemVer](https://semver.org/lang/es/).
 
+## [1.0.1] — 2026-10-24
+
+Correcciones salidas de la verificación del sitio desplegado (navegación real a
+375, 768 y 1440 px + arnés `tools/verify-production.js`).
+
+### Corregido
+
+- **Desbordamiento horizontal en móvil** en `/carrito`, `/checkout`, `/pedido` y
+  `/404`: los degradados decorativos (`.aurora-a` mide 42 rem con `right:-10rem`)
+  no estaban recortados por su sección, así que a 375 px el documento medía
+  521 px y el resumen del carrito quedaba cortado. Las secciones ahora usan
+  `overflow-hidden` y la línea del carrito pasa a imagen de 80 px con fila
+  inferior que puede saltar.
+- **Búsqueda insensible a acentos**: «lampara» devolvía 0 resultados y
+  «lámpara» devolvía 7. `CatalogService.search()` pliega diacríticos
+  (`NFD` + eliminación de `U+0300–U+036F`) y compara por palabras sobre nombre,
+  claim, categoría, proveedor, público, características y especificaciones.
+- **Selector de orden**: las `<option>` usaban `ngValue` dentro de un `ngModel`
+  de tipo `string`, por lo que su `value` real era `"0: destacados"` /
+  `"1: precio-asc"`. Se sustituye por `[value]` con el id.
+- **Opacidades inexistentes**: `white/8`, `white/12`, `white/15` y `neon-*/15`
+  no están en la escala de Tailwind y el compilador los descartaba en silencio
+  (26 bordes, divisores y fondos sin pintar). Se convierten a la sintaxis
+  arbitraria `white/[0.12]` y equivalentes.
+- **Mensaje de pasarela no configurada**: el 503 `payments_not_configured`
+  nombraba `STRIPE_SECRET_KEY` al comprador. Se mantiene el estado y el código,
+  pero el texto pasa a ser una explicación de negocio.
+
+### Añadido
+
+- `tools/check-catalog-search.js`: comprueba la semántica de búsqueda (acentos y
+  palabras) contra el snapshot real del catálogo.
+
 ## [1.0.0] — 2026-10-24
 
 Primera versión funcional: catálogo real multiproveedor, compra completa y
