@@ -108,7 +108,9 @@ exports.handler = async function (event) {
     const sessionParams = {
       mode: 'payment',
       locale: 'es',
-      payment_method_types: ['card'],
+      // Sin `payment_method_types`: la API actual de Stripe ya no acepta ese
+      // parámetro en Checkout y rechaza la sesión entera. Los métodos activos
+      // se gobiernan desde el panel de Stripe, no desde el código.
       client_reference_id: reference,
       customer_email: customer.email,
       billing_address_collection: 'required',
