@@ -143,6 +143,13 @@ async function verifyFunctions() {
     check('checkout responde 200 o 503', false, 'status ' + validOrder.status + ' ' + validOrder.body.slice(0, 160));
   }
 
+  // El comprador nunca debe ver nombres de variables de entorno ni rutas internas.
+  check(
+    'los errores no filtran detalles tecnicos',
+    !/STRIPE_[A-Z_]+|process\.env|netlify\/functions/i.test(validOrder.body),
+    validOrder.body.slice(0, 160)
+  );
+
   const orderNoId = await get('/.netlify/functions/get-order');
   check('get-order exige session_id (400)', orderNoId.status === 400, 'status ' + orderNoId.status);
 
