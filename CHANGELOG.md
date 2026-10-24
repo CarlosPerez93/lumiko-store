@@ -116,4 +116,5 @@ pago con Stripe Checkout.
 - Cabeceras `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy` y
   `Permissions-Policy`; `Cache-Control: no-store` en las Functions.
 
+[1.0.1]: https://github.com/CarlosPerez93/lumiko-store/releases/tag/v1.0.1
 [1.0.0]: https://github.com/CarlosPerez93/lumiko-store/releases/tag/v1.0.0
