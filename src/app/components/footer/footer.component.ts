@@ -1,5 +1,18 @@
 import { Component } from '@angular/core';
 
+interface FooterLink {
+  label: string;
+  path?: string;
+  fragment?: string;
+  queryParams?: { [key: string]: string };
+  href?: string;
+}
+
+interface FooterColumn {
+  title: string;
+  links: FooterLink[];
+}
+
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html'
@@ -7,38 +20,37 @@ import { Component } from '@angular/core';
 export class FooterComponent {
   readonly year = new Date().getFullYear();
 
-  readonly columns = [
+  readonly columns: FooterColumn[] = [
     {
       title: 'Tienda',
       links: [
-        { label: 'Lámparas inteligentes', href: '#catalogo' },
-        { label: 'Robots de compañía', href: '#catalogo' },
-        { label: 'Proyección', href: '#catalogo' },
-        { label: 'Gaming & pixel', href: '#catalogo' },
-        { label: 'Packs y regalos', href: '#experiencia' }
+        { label: 'Lámparas inteligentes', path: '/catalogo', queryParams: { categoria: 'lamparas' } },
+        { label: 'Robots de compañía', path: '/catalogo', queryParams: { categoria: 'robots' } },
+        { label: 'Proyección', path: '/catalogo', queryParams: { categoria: 'proyeccion' } },
+        { label: 'Gaming & pixel', path: '/catalogo', queryParams: { categoria: 'gaming' } },
+        { label: 'Catálogo completo', path: '/catalogo' }
       ]
     },
     {
       title: 'Ayuda',
       links: [
-        { label: 'Envíos y entregas', href: '#faq' },
-        { label: 'Devoluciones', href: '#faq' },
-        { label: 'Garantía', href: '#faq' },
-        { label: 'Compatibilidad', href: '#experiencia' },
+        { label: 'Envíos y entregas', path: '/', fragment: 'faq' },
+        { label: 'Devoluciones', path: '/', fragment: 'faq' },
+        { label: 'Cómo funciona', path: '/', fragment: 'experiencia' },
+        { label: 'Proveedores', path: '/', fragment: 'proveedores' },
         { label: 'Contacto', href: 'mailto:hola@lumiko.store' }
       ]
     },
     {
       title: 'LUMIKO',
       links: [
-        { label: 'Sobre nosotros', href: '#experiencia' },
-        { label: 'Opiniones', href: '#opiniones' },
+        { label: 'Catálogo', path: '/catalogo' },
+        { label: 'Mi carrito', path: '/carrito' },
         { label: 'Prensa', href: 'mailto:prensa@lumiko.store' },
-        { label: 'Programa embajadores', href: '#experiencia' },
         { label: 'Trabaja con nosotros', href: 'mailto:talento@lumiko.store' }
       ]
     }
   ];
 
-  readonly payments = ['Visa', 'Mastercard', 'PayPal', 'Bizum', 'Apple Pay'];
+  readonly payments = ['Visa', 'Mastercard', 'American Express', 'Apple Pay', 'Google Pay'];
 }

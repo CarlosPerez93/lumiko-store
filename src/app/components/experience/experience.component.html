@@ -8,183 +8,139 @@
     <div class="max-w-2xl reveal" appReveal>
       <span class="eyebrow">
         <span class="h-px w-8 bg-neon-cyan"></span>
-        La experiencia LUMIKO
+        Cómo funciona
       </span>
-      <h2 class="section-title mt-4 balance">Domótica que un niño de cinco años entiende</h2>
+      <h2 class="section-title mt-4 balance">Del fabricante a tu mesilla, sin humo</h2>
       <p class="mt-4 text-[15px] leading-relaxed text-slate-400">
-        Nada de manuales de 40 páginas. Cada pieza se configura en dos minutos y funciona igual de
-        bien en la habitación de un peque que en el salón de un adulto coleccionista.
+        LUMIKO trabaja con proveedores verificados del marketplace. Tú ves exactamente lo que hay:
+        quién fabrica, cuánto cuesta la referencia y cómo se procesa tu pago.
       </p>
     </div>
 
-    <!-- Ventajas -->
+    <!-- Pasos -->
     <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <article
-        *ngFor="let feature of features; let i = index"
+        *ngFor="let step of steps; let i = index"
         class="card-surface group p-6 reveal"
         appReveal
         [appRevealDelay]="i * 90"
       >
         <span class="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-transparent text-neon-cyan transition-all duration-500 group-hover:border-neon-cyan/40 group-hover:text-white">
-          <svg *ngIf="feature.icon === 'voice'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V7a3 3 0 0 1 3-3Z"/><path stroke-linecap="round" d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg>
-          <svg *ngIf="feature.icon === 'moon'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"/></svg>
-          <svg *ngIf="feature.icon === 'shield'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 12 2 2 4-4"/></svg>
-          <svg *ngIf="feature.icon === 'spark'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v4M12 17v4M4.5 12h4M15.5 12h4M6.7 6.7l2.8 2.8M14.5 14.5l2.8 2.8M17.3 6.7l-2.8 2.8M9.5 14.5l-2.8 2.8"/></svg>
+          <svg *ngIf="step.icon === 'search'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m20 20-3.2-3.2"/></svg>
+          <svg *ngIf="step.icon === 'tag'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12V5h7l9 9-7 7-9-9Z"/><circle cx="8.5" cy="8.5" r="1.2"/></svg>
+          <svg *ngIf="step.icon === 'lock'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9" rx="2.5"/><path stroke-linecap="round" d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>
+          <svg *ngIf="step.icon === 'check'" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 12 2 2 4-4"/></svg>
         </span>
-        <h3 class="mt-5 font-display text-[15px] font-semibold text-white">{{ feature.title }}</h3>
-        <p class="mt-2 text-[13px] leading-relaxed text-slate-400">{{ feature.text }}</p>
+        <h3 class="mt-5 font-display text-[15px] font-semibold text-white">{{ step.title }}</h3>
+        <p class="mt-2 text-[13px] leading-relaxed text-slate-400">{{ step.text }}</p>
       </article>
     </div>
 
-    <!-- App + mockup -->
-    <div class="mt-20 grid items-center gap-14 lg:grid-cols-2 lg:gap-16">
+    <!-- Datos del catálogo -->
+    <div class="mt-20 grid items-center gap-10 lg:grid-cols-[1fr_1fr] lg:gap-16">
       <div class="reveal reveal-left" appReveal>
-        <span class="eyebrow"><span class="h-px w-8 bg-neon-pink"></span> App LUMIKO</span>
-        <h3 class="section-title mt-4 text-[30px] sm:text-[40px]">Una app, toda la casa iluminada</h3>
+        <span class="eyebrow"><span class="h-px w-8 bg-neon-pink"></span> Catálogo verificable</span>
+        <h3 class="section-title mt-4 text-[30px] sm:text-[40px]">Lo que hay hoy en la tienda</h3>
         <p class="mt-4 text-[15px] leading-relaxed text-slate-400">
-          Controla cada lámpara, robot y proyector desde un único panel. Sin suscripciones, sin
-          cuentas obligatorias y con control local si se cae el Wi-Fi.
+          El catálogo se genera a partir de las fichas públicas de los proveedores y se versiona en el
+          repositorio, así que los precios y las referencias son reproducibles: puedes auditar de dónde
+          sale cada producto.
         </p>
 
-        <dl class="mt-8 space-y-5">
-          <div *ngFor="let point of appPoints; let i = index" class="flex gap-4">
-            <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] font-display text-[11px] font-bold text-neon-cyan">
-              0{{ i + 1 }}
-            </span>
-            <div>
-              <dt class="text-sm font-semibold text-white">{{ point.title }}</dt>
-              <dd class="mt-1 text-[13px] leading-relaxed text-slate-400">{{ point.text }}</dd>
-            </div>
+        <dl class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+            <dt class="font-display text-2xl font-bold text-white">{{ stats.products }}</dt>
+            <dd class="mt-1 text-[11px] uppercase tracking-[0.14em] text-slate-500">productos</dd>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+            <dt class="font-display text-2xl font-bold text-white">{{ stats.suppliers }}</dt>
+            <dd class="mt-1 text-[11px] uppercase tracking-[0.14em] text-slate-500">proveedores</dd>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+            <dt class="font-display text-2xl font-bold text-neon-lime">{{ stats.verified }}</dt>
+            <dd class="mt-1 text-[11px] uppercase tracking-[0.14em] text-slate-500">verificados</dd>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+            <dt class="font-display text-2xl font-bold text-white">{{ stats.avgPrice | currency: 'EUR' : 'symbol' : '1.0-0' }}</dt>
+            <dd class="mt-1 text-[11px] uppercase tracking-[0.14em] text-slate-500">precio medio</dd>
           </div>
         </dl>
 
         <div class="mt-8 flex flex-wrap items-center gap-3">
-          <a href="#catalogo" class="btn-primary">Ver dispositivos compatibles</a>
-          <div class="flex items-center gap-2 text-[11px] text-slate-500">
-            <svg class="h-4 w-4 text-neon-lime" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.5 5 5 10-11"/></svg>
-            iOS 14+ · Android 9+
-          </div>
+          <a routerLink="/catalogo" class="btn-primary">Ver el catálogo completo</a>
+          <span class="text-[11px] text-slate-500">
+            {{ stats.minPrice | currency: 'EUR' : 'symbol' : '1.2-2' }} – {{ stats.maxPrice | currency: 'EUR' : 'symbol' : '1.2-2' }} · IVA incluido
+          </span>
         </div>
       </div>
 
-      <!-- Mockup móvil -->
+      <!-- Fuentes del catálogo -->
       <div class="relative reveal reveal-right" appReveal [appRevealDelay]="120">
-        <div class="pointer-events-none absolute inset-0 -z-10 mx-auto h-80 w-80 rounded-full bg-neon-violet/25 blur-[90px]"></div>
+        <div class="pointer-events-none absolute inset-0 -z-10 mx-auto h-72 w-72 rounded-full bg-neon-violet/25 blur-[90px]"></div>
 
-        <div class="relative mx-auto w-[286px] animate-float">
-          <div class="relative rounded-[2.6rem] border border-white/15 bg-ink-900 p-2.5 shadow-card">
-            <div class="absolute left-1/2 top-4 z-10 h-1.5 w-16 -translate-x-1/2 rounded-full bg-white/15"></div>
-            <div class="overflow-hidden rounded-[2.1rem] bg-gradient-to-b from-ink-700 via-ink-800 to-ink-900 px-4 pb-5 pt-9">
-              <!-- header -->
-              <div class="flex items-center justify-between">
-                <div>
-                  <p class="text-[9px] uppercase tracking-[0.2em] text-slate-500">Habitación</p>
-                  <p class="mt-0.5 font-display text-[13px] font-bold text-white">Cuarto de Nora</p>
-                </div>
-                <span class="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-neon-pink to-neon-violet text-[10px] font-bold text-white">N</span>
+        <div class="relative rounded-[2rem] border border-white/12 bg-ink-800/80 p-6 shadow-card backdrop-blur sm:p-8">
+          <p class="text-[10px] uppercase tracking-[0.24em] text-slate-500">Fuentes conectadas</p>
+
+          <ul class="mt-5 space-y-3">
+            <li *ngFor="let source of sources" class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-neon-pink/30 to-neon-violet/20 text-[11px] font-bold text-white">
+                {{ source.region }}
+              </span>
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-semibold text-white">{{ source.label }}</p>
+                <p class="mt-0.5 text-[11px] text-slate-500">{{ source.products }} productos · snapshot {{ source.generatedAt }}</p>
               </div>
+              <span class="rounded-full bg-neon-lime/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-neon-lime">activo</span>
+            </li>
+          </ul>
 
-              <!-- tarjeta principal -->
-              <div class="relative mt-4 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-neon-pink/25 via-neon-violet/15 to-transparent p-3">
-                <div class="flex items-center gap-3">
-                  <img [src]="pack.items[0].image" alt="Lámpara Tsukuyomi" class="h-12 w-12 rounded-xl object-cover" />
-                  <div class="min-w-0">
-                    <p class="truncate text-[11px] font-semibold text-white">Lámpara Tsukuyomi</p>
-                    <p class="text-[9px] text-neon-lime">Encendida · Sakura</p>
-                  </div>
-                  <span class="ml-auto flex h-6 w-10 items-center rounded-full bg-neon-lime/90 p-0.5">
-                    <span class="ml-auto h-5 w-5 rounded-full bg-ink-900"></span>
-                  </span>
-                </div>
+          <p class="mt-5 text-[12px] leading-relaxed text-slate-500">
+            Añadir un proveedor nuevo no requiere rehacer la tienda: se implementa un adaptador y se
+            registra en la configuración del catálogo.
+          </p>
 
-                <div class="mt-4">
-                  <div class="flex items-center justify-between text-[9px] text-slate-400">
-                    <span>Brillo</span>
-                    <span class="text-white">72 %</span>
-                  </div>
-                  <div class="mt-1.5 h-1.5 rounded-full bg-white/15">
-                    <div class="h-full w-[72%] rounded-full bg-gradient-to-r from-neon-pink to-white"></div>
-                  </div>
-                </div>
-
-                <div class="mt-3 flex items-center gap-1.5">
-                  <span class="h-4 w-4 rounded-full bg-[#FF3D8A] ring-2 ring-white/60"></span>
-                  <span class="h-4 w-4 rounded-full bg-[#22D3EE]"></span>
-                  <span class="h-4 w-4 rounded-full bg-[#C6F26B]"></span>
-                  <span class="h-4 w-4 rounded-full bg-[#FFB347]"></span>
-                  <span class="h-4 w-4 rounded-full border border-dashed border-white/40"></span>
-                </div>
-              </div>
-
-              <!-- escenas -->
-              <p class="mt-4 text-[9px] uppercase tracking-[0.2em] text-slate-500">Escenas</p>
-              <div class="mt-2 grid grid-cols-3 gap-2">
-                <div class="rounded-xl border border-white/10 bg-white/[0.05] p-2 text-center">
-                  <span class="mx-auto block h-6 w-6 rounded-full bg-gradient-to-br from-pink-400 to-fuchsia-600"></span>
-                  <p class="mt-1.5 text-[8px] text-slate-300">Sakura</p>
-                </div>
-                <div class="rounded-xl border border-white/10 bg-white/[0.05] p-2 text-center">
-                  <span class="mx-auto block h-6 w-6 rounded-full bg-gradient-to-br from-cyan-300 to-blue-600"></span>
-                  <p class="mt-1.5 text-[8px] text-slate-300">Umi</p>
-                </div>
-                <div class="rounded-xl border border-white/10 bg-white/[0.05] p-2 text-center">
-                  <span class="mx-auto block h-6 w-6 rounded-full bg-gradient-to-br from-lime-300 to-emerald-500"></span>
-                  <p class="mt-1.5 text-[8px] text-slate-300">Matsuri</p>
-                </div>
-              </div>
-
-              <!-- dispositivo 2 -->
-              <div class="mt-3 flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-2.5">
-                <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-neon-cyan/15 text-neon-cyan">
-                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2M12 19v2M5 12H3M21 12h-2M7 7 5.6 5.6M18.4 18.4 17 17M17 7l1.4-1.4M5.6 18.4 7 17"/><circle cx="12" cy="12" r="3.5"/></svg>
-                </span>
-                <div class="min-w-0 flex-1">
-                  <p class="truncate text-[10px] font-medium text-white">Proyector Nebula</p>
-                  <p class="text-[8px] text-slate-500">En espera</p>
-                </div>
-                <span class="flex h-5 w-9 items-center rounded-full bg-white/15 p-0.5">
-                  <span class="h-4 w-4 rounded-full bg-slate-400"></span>
-                </span>
-              </div>
+          <div class="mt-6 space-y-2 border-t border-white/10 pt-5">
+            <div *ngFor="let point of shippingPoints" class="flex items-start gap-3">
+              <svg class="mt-0.5 h-4 w-4 shrink-0 text-neon-lime" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.5 5 5 10-11"/></svg>
+              <p class="text-[12px] text-slate-400"><span class="font-semibold text-white">{{ point.title }}.</span> {{ point.text }}</p>
             </div>
-          </div>
-
-          <!-- chip flotante -->
-          <div class="float-chip absolute -left-6 bottom-16 hidden rounded-2xl border border-white/15 bg-ink-900/85 px-3.5 py-2.5 backdrop-blur-xl sm:block">
-            <p class="text-[9px] uppercase tracking-widest text-slate-500">Consumo</p>
-            <p class="mt-0.5 font-display text-sm font-bold text-neon-lime">-38 %</p>
-            <p class="text-[9px] text-slate-500">vs. bombilla halógena</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Pack -->
+    <!-- Compra protegida -->
     <div class="relative mt-20 overflow-hidden rounded-[2rem] border border-white/12 bg-gradient-to-r from-ink-700 via-ink-800 to-ink-700 reveal" appReveal>
       <div class="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-neon-pink/25 blur-[80px]"></div>
       <div class="relative grid gap-8 p-7 sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
         <div>
           <span class="inline-flex items-center gap-2 rounded-full bg-neon-lime/15 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-neon-lime">
-            Pack ahorro · -14 %
+            Pago seguro
           </span>
-          <h3 class="mt-4 font-display text-2xl font-bold text-white sm:text-3xl">Dúo Luminoso: lámpara + proyector</h3>
+          <h3 class="mt-4 font-display text-2xl font-bold text-white sm:text-3xl">Stripe Checkout, sin datos de tarjeta en la tienda</h3>
           <p class="mt-3 max-w-xl text-sm leading-relaxed text-slate-400">
-            La combinación favorita para cumpleaños: la lámpara Tsukuyomi para la mesilla y el
-            proyector Nebula para el techo. Se sincronizan entre sí y comparten escenas.
+            El importe se recalcula en el servidor antes de crear la sesión de pago, así que el precio
+            que ves es el que se cobra. La confirmación del pedido depende del webhook firmado de Stripe.
           </p>
-          <div class="mt-6 flex flex-wrap items-center gap-4">
-            <div class="flex items-baseline gap-2">
-              <span class="font-display text-3xl font-extrabold text-white">{{ pack.price | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-              <span class="text-sm text-slate-500 line-through">{{ pack.oldPrice | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-            </div>
-            <button type="button" class="btn-primary" (click)="addPack()">Añadir el pack</button>
+          <div class="mt-6 flex flex-wrap items-center gap-3">
+            <a routerLink="/catalogo" class="btn-primary">Empezar a comprar</a>
+            <a routerLink="/carrito" class="btn-ghost">Ver mi carrito</a>
           </div>
         </div>
 
-        <div class="flex items-center justify-center gap-4">
-          <img *ngFor="let item of pack.items; let i = index" [src]="item.image" [alt]="item.name"
-               class="h-28 w-28 rounded-2xl border border-white/15 object-cover sm:h-36 sm:w-36"
-               [class.tilt-l]="i === 0" [class.tilt-r]="i === 1" />
+        <div class="grid grid-cols-3 gap-3">
+          <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center">
+            <p class="font-display text-[13px] font-bold text-white">Stripe</p>
+            <p class="mt-1 text-[10px] uppercase tracking-widest text-slate-500">Checkout</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center">
+            <p class="font-display text-[13px] font-bold text-white">TLS 1.3</p>
+            <p class="mt-1 text-[10px] uppercase tracking-widest text-slate-500">Cifrado</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center">
+            <p class="font-display text-[13px] font-bold text-white">Webhook</p>
+            <p class="mt-1 text-[10px] uppercase tracking-widest text-slate-500">Firmado</p>
+          </div>
         </div>
       </div>
     </div>

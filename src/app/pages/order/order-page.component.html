@@ -1,0 +1,102 @@
+﻿<section class="relative pb-24 pt-28 sm:pt-32 lg:pt-36">
+  <div class="pointer-events-none absolute inset-0 -z-10">
+    <div class="aurora aurora-a opacity-50"></div>
+    <div class="absolute inset-0 grid-lines opacity-30"></div>
+  </div>
+
+  <div class="container-x max-w-3xl">
+    <!-- Cargando -->
+    <div *ngIf="view === 'loading'" class="rounded-[2rem] border border-white/10 bg-white/[0.02] p-10 text-center">
+      <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-neon-cyan">
+        <svg class="h-6 w-6 animate-spin" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 3a9 9 0 1 0 9 9"/></svg>
+      </span>
+      <h1 class="mt-5 font-display text-xl font-semibold text-white">Confirmando tu pago</h1>
+      <p class="mt-2 text-sm text-slate-400">Estamos consultando el estado del pedido en Stripe.</p>
+    </div>
+
+    <!-- Pagado -->
+    <div *ngIf="view === 'paid' && order as o" class="rounded-[2rem] border border-neon-lime/25 bg-white/[0.02] p-8 sm:p-10">
+      <div class="flex flex-col items-center text-center">
+        <span class="flex h-16 w-16 items-center justify-center rounded-full border border-neon-lime/40 bg-neon-lime/10 text-neon-lime">
+          <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>
+        </span>
+        <p class="eyebrow mt-5">Pedido confirmado</p>
+        <h1 class="section-title mt-2 text-[28px] sm:text-[34px]">¡Gracias{{ o.customerName ? ', ' + o.customerName : '' }}!</h1>
+        <p class="mt-3 max-w-md text-sm text-slate-400">
+          Hemos recibido tu pago. Te enviamos la confirmación a
+          <span class="font-medium text-white">{{ o.email || 'tu correo' }}</span>.
+        </p>
+        <span class="mt-4 rounded-full border border-neon-lime/40 bg-neon-lime/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-neon-lime">
+          {{ statusLabel }}
+        </span>
+      </div>
+
+      <div class="mt-8 rounded-2xl border border-white/10 bg-ink-800/60 p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
+          <span>Referencia del pedido</span>
+          <span class="font-mono text-slate-300">{{ o.id }}</span>
+        </div>
+
+        <ul class="mt-4 space-y-3 border-t border-white/10 pt-4">
+          <li *ngFor="let line of o.items" class="flex items-center justify-between gap-3 text-[13px]">
+            <span class="min-w-0 flex-1 truncate text-slate-300">{{ line.qty }} × {{ line.name }}</span>
+            <span class="shrink-0 font-medium text-white">{{ line.amount | currency: (o.currency | uppercase) : 'symbol' : '1.2-2' }}</span>
+          </li>
+        </ul>
+
+        <div class="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
+          <span class="font-display text-sm font-semibold text-white">Total pagado</span>
+          <span class="font-display text-lg font-bold text-white">{{ o.amountTotal | currency: (o.currency | uppercase) : 'symbol' : '1.2-2' }}</span>
+        </div>
+      </div>
+
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <a routerLink="/catalogo" class="btn-primary flex-1">Seguir comprando</a>
+        <a routerLink="/" class="btn-ghost flex-1">Volver al inicio</a>
+      </div>
+    </div>
+
+    <!-- Pendiente -->
+    <div *ngIf="view === 'pending'" class="rounded-[2rem] border border-neon-amber/25 bg-white/[0.02] p-10 text-center">
+      <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-neon-amber/40 bg-neon-amber/10 text-neon-amber">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M12 8v4l3 2"/></svg>
+      </span>
+      <h1 class="mt-5 font-display text-xl font-semibold text-white">Pago en proceso</h1>
+      <p class="mx-auto mt-2 max-w-md text-sm text-slate-400">{{ message }}</p>
+      <div class="mt-6 flex justify-center">
+        <span class="pill pill-active">Consultando Stripe…</span>
+      </div>
+    </div>
+
+    <!-- Cancelado -->
+    <div *ngIf="view === 'canceled'" class="rounded-[2rem] border border-white/10 bg-white/[0.02] p-10 text-center">
+      <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-white/12 bg-white/[0.04] text-slate-300">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></svg>
+      </span>
+      <h1 class="mt-5 font-display text-xl font-semibold text-white">Pago cancelado</h1>
+      <p class="mx-auto mt-2 max-w-md text-sm text-slate-400">{{ message }}</p>
+      <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
+        <a routerLink="/checkout" class="btn-primary">Reintentar el pago</a>
+        <a routerLink="/carrito" class="btn-ghost">Revisar el carrito</a>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="view === 'error'" class="rounded-[2rem] border border-neon-pink/30 bg-white/[0.02] p-10 text-center">
+      <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-neon-pink/40 bg-neon-pink/10 text-neon-pink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M12 8v4m0 3h.01"/></svg>
+      </span>
+      <h1 class="mt-5 font-display text-xl font-semibold text-white">No hemos podido confirmar el pedido</h1>
+      <p class="mx-auto mt-2 max-w-md text-sm text-slate-400">{{ message }}</p>
+      <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
+        <button type="button" class="btn-primary" (click)="load(sessionId)" *ngIf="sessionId">Reintentar</button>
+        <a routerLink="/carrito" class="btn-ghost">Volver al carrito</a>
+        <a routerLink="/catalogo" class="btn-ghost">Ver catálogo</a>
+      </div>
+      <p class="mt-6 text-[11px] text-slate-600">
+        Si el importe se ha cobrado, escríbenos con la referencia del pago y lo resolvemos manualmente.
+      </p>
+    </div>
+  </div>
+</section>
+

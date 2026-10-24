@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Product } from '../../core/product.model';
-import { PRODUCTS } from '../../core/products.data';
+import { CatalogService } from '../../core/catalog/catalog.service';
 import { CartService } from '../../core/cart.service';
 import { ToastService } from '../../core/toast.service';
 
@@ -9,25 +9,34 @@ import { ToastService } from '../../core/toast.service';
   templateUrl: './hero.component.html'
 })
 export class HeroComponent {
-  readonly featured: Product = PRODUCTS[0];
+  readonly featured: Product | null;
 
   readonly marquee = [
     'Envío gratis desde 49 €',
-    'Garantía de 2 años',
+    'Pago seguro con Stripe',
     'Control por app y voz',
-    'Diseñado en Barcelona',
-    'Pago 100 % seguro',
-    'Devolución en 30 días',
-    'Soporte con personas reales'
+    'Proveedores de Alibaba.com',
+    'Precios y MOQ reales',
+    'Devolución en 14 días'
   ];
 
-  readonly stats = [
-    { value: '12.400+', label: 'hogares iluminados' },
-    { value: '4,9/5', label: '1.842 reseñas' },
-    { value: '24/48 h', label: 'entrega península' }
-  ];
+  constructor(
+    private catalog: CatalogService,
+    private cart: CartService,
+    private toast: ToastService
+  ) {
+    const [first] = this.catalog.featured(1);
+    this.featured = first || null;
+  }
 
-  constructor(private cart: CartService, private toast: ToastService) {}
+  get stats(): { value: string; label: string }[] {
+    const s = this.catalog.stats();
+    return [
+      { value: String(s.products), label: 'productos reales' },
+      { value: String(s.suppliers), label: 'proveedores' },
+      { value: String(s.verified), label: 'verificados' }
+    ];
+  }
 
   scrollTo(id: string): void {
     const target = document.getElementById(id);
@@ -37,8 +46,11 @@ export class HeroComponent {
   }
 
   addFeatured(): void {
-    this.cart.add(this.featured, this.featured.colors[0].name, 1);
-    this.toast.show(`${this.featured.name} añadida al carrito`);
+    if (!this.featured) {
+      return;
+    }
+    this.cart.add(this.featured);
+    this.toast.show(`${this.featured.name} añadido al carrito`);
     this.cart.openDrawer();
   }
 }

@@ -66,7 +66,7 @@
             <div class="flex items-start justify-between gap-2">
               <div class="min-w-0">
                 <p class="truncate text-sm font-semibold text-white">{{ line.product.name }}</p>
-                <p class="mt-0.5 text-[11px] text-slate-500">{{ line.color }}</p>
+                <p class="mt-0.5 text-[11px] text-slate-500">{{ line.product.sourceLabel }} · {{ line.product.supplier.name }}</p>
               </div>
               <button
                 type="button"
@@ -139,9 +139,9 @@
           <dd class="font-display text-xl font-extrabold text-white">{{ state.total | currency: 'EUR' : 'symbol' : '1.2-2' }}</dd>
         </div>
       </dl>
-      <button type="button" class="btn-primary mt-4 w-full" (click)="checkout()">Finalizar compra</button>
+      <button type="button" class="btn-primary mt-4 w-full" (click)="checkout()">Ir al checkout</button>
       <p class="mt-3 text-center text-[10px] leading-relaxed text-slate-600">
-        Entorno de demostración · no se procesan pagos reales
+        Pago con Stripe Checkout · el importe se recalcula en el servidor
       </p>
     </footer>
   </aside>
