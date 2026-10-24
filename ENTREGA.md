@@ -33,11 +33,21 @@ dev         ●── feat/storefront-v1 ───────●  ← integraci
 
 | Proveedor | Adaptador | Productos | Datos que aporta |
 |---|---|---|---|
-| Alibaba.com | `src/app/core/catalog/alibaba/alibaba.source.ts` | 24 | precio mayorista por tramos, MOQ, imágenes reales, valoración, proveedor verificado, país, plazo y URL de la ficha original |
+| Alibaba.com (marketplace, CN) | `src/app/core/catalog/alibaba/alibaba.source.ts` | 24 | precio mayorista por tramos, MOQ, imágenes reales, valoración, proveedor verificado, país, plazo y URL de la ficha original |
+| ABYstyle · Abysse Corp (distribuidor, FR) | `src/app/core/catalog/abystyle/abystyle.source.ts` | 12 | PVP publicado en EUR, imágenes y ficha reales, plazos, referencia del fabricante y URL de origen |
 
 Cada producto muestra su proveedor de origen y enlaza a la ficha real. El precio de
-venta lo fija LUMIKO (`src/app/core/catalog/pricing.ts`: margen 2,6 · mínimo 12,90 € ·
-redondeo 0,10 €).
+venta lo fija LUMIKO (`src/app/core/catalog/pricing.ts`).
+
+**Dos economías distintas, una sola fórmula.** El marketplace publica coste de fábrica,
+así que se aplica `PRICING_POLICY` (margen 2,6 · mínimo 12,90 € · redondeo 0,10 €). El
+distribuidor europeo publica precio de venta al público, así que su fuente declara
+`RETAIL_PURCHASE_POLICY` (margen 1,3 ≈ 23 % bruto) para no vender por encima del PVP
+oficial. La política viaja en `meta.pricingPolicy` y la aplican tanto `CatalogService`
+como el backend: precio mostrado y precio cobrado no pueden divergir.
+
+Ese segundo adaptador es la prueba de que la arquitectura aguanta: entró sin tocar
+componentes, rutas, carrito, checkout ni backend, solo con una carpeta y una línea.
 
 **Añadir un proveedor nuevo = 2 pasos** (sin tocar componentes ni rutas):
 
@@ -88,9 +98,9 @@ Ejecutada contra el sitio desplegado el 24 de octubre de 2026:
 2. **Dominio propio** (el mandato lo deja como «si corresponde»). Hoy la tienda vive en
    `lumiko-store.netlify.app`; un dominio tipo `lumiko.shop` se añade en Netlify con DNS
    y HTTPS automático, sin cambios de código.
-3. **Despliegue continuo.** El proyecto Netlify no está enlazado al repositorio, así que
-   publicar es manual (`npx netlify deploy --build --prod`). Enlazarlo desde la UI deja
-   `main` como producción y `dev` como preview.
+3. ~~**Despliegue continuo.**~~ **Resuelto.** El repositorio está enlazado a Netlify:
+    `main` despliega a producción y `dev` genera preview. Verificado con un build real
+    disparado desde GitHub (`Production · main@38f1dd2`, 1 m 3 s), no con un deploy local.
 
 ## 7. Cómo operar
 
@@ -99,7 +109,7 @@ npm install          # dependencias
 npm start            # http://localhost:4200
 npx netlify dev      # http://localhost:8888 con Functions
 npm run build        # compila en dist/lumiko
-npm run verify:backend    # 31 comprobaciones de reglas comerciales
+npm run verify:backend    # 33 comprobaciones de reglas comerciales y del catálogo
 node tools/verify-production.js   # 34 comprobaciones contra producción
 node tools/check-catalog-search.js  # semántica de búsqueda sobre el catálogo real
 npx netlify deploy --build --prod   # publicar

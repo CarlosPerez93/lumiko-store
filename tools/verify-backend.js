@@ -47,7 +47,25 @@ async function main() {
   const products = commerce.catalog.products;
 
   console.log('\nCatálogo en servidor');
-  await check('hay 24 productos en el snapshot', () => assert.strictEqual(products.length, 24));
+  const sources = commerce.catalog.sources || [];
+  await check('el snapshot declara sus fuentes', () => {
+    assert.ok(sources.length >= 2, 'se esperaban al menos 2 fuentes, hay ' + sources.length);
+    const ids = sources.map((s) => s.id);
+    assert.ok(ids.indexOf('alibaba') !== -1, 'falta la fuente alibaba');
+    assert.ok(ids.indexOf('abystyle') !== -1, 'falta la fuente abystyle');
+  });
+  await check('el número de productos cuadra con la suma de las fuentes', () => {
+    const total = sources.reduce((sum, s) => sum + s.products, 0);
+    assert.strictEqual(products.length, total);
+    assert.ok(products.length >= 24, 'catálogo por debajo del mínimo histórico');
+  });
+  await check('cada fuente tiene su propia política de precios', () => {
+    const alibaba = sources.filter((s) => s.id === 'alibaba')[0];
+    const abystyle = sources.filter((s) => s.id === 'abystyle')[0];
+    assert.ok(alibaba.pricingPolicy.marginMultiplier > 2, 'el marketplace debe ir a precio mayorista');
+    assert.ok(abystyle.pricingPolicy.marginMultiplier < 1.5, 'el distribuidor publica PVP: margen bajo');
+    assert.notStrictEqual(alibaba.pricingPolicy.marginMultiplier, abystyle.pricingPolicy.marginMultiplier);
+  });
   await check('todos los precios son enteros en céntimos > 0', () =>
     products.forEach((p) => {
       assert.ok(Number.isInteger(p.unitAmount), p.id + ' no es entero');

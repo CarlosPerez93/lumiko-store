@@ -6,6 +6,8 @@
  * Anadir un proveedor nuevo = crear un adaptador + registrarlo en
  * CatalogService. No hay que tocar componentes ni rutas.
  */
+import { PricingPolicy } from './pricing';
+
 export type StoreCategory = 'lamparas' | 'robots' | 'proyeccion' | 'gaming';
 
 export interface SupplierTerms {
@@ -50,13 +52,24 @@ export interface SupplierProduct {
   quantityPrices: { minQty: number; maxQty: number | null; price: number }[];
   /** Valoracion de la publicacion del producto, si el proveedor la publica. */
   reviewsScore?: number;
+  /**
+   * Disponibilidad declarada por el proveedor. Si se omite, la tienda la deduce
+   * del plazo de entrega (con plazo => bajo pedido).
+   */
+  availability?: 'disponible' | 'bajo-pedido';
 }
 
 export interface ProductSourceMeta {
   id: string;
   label: string;
   region: string;
-  kind: 'marketplace' | 'factory' | 'dropshipper';
+  kind: 'marketplace' | 'factory' | 'dropshipper' | 'retailer';
   products: number;
   generatedAt: string;
+  /**
+   * Politica de precios propia de la fuente. Solo se declara cuando el coste
+   * del proveedor NO es mayorista (por ejemplo, un distribuidor que publica
+   * precio de venta al publico). Si falta, se aplica PRICING_POLICY.
+   */
+  pricingPolicy?: PricingPolicy;
 }

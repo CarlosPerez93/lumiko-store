@@ -1,7 +1,7 @@
 # LUMIKO · Smart Play
 
 Tienda online de **juguetes domotizados y lámparas inteligentes de anime** para niños y adultos.
-Angular 12 + Tailwind 3, catálogo multiproveedor con 24 productos reales de Alibaba.com, carrito persistente, cupones, checkout con **Stripe Checkout** y página de confirmación de pedido con estados de pago reales.
+Angular 12 + Tailwind 3, catálogo multiproveedor con **36 productos reales de dos proveedores** (Alibaba.com y ABYstyle), carrito persistente, cupones, checkout con **Stripe Checkout** y página de confirmación de pedido con estados de pago reales.
 
 ![stack](https://img.shields.io/badge/Angular-12.2.17-DD0031) ![stack](https://img.shields.io/badge/Tailwind-3.4-38BDF8) ![stack](https://img.shields.io/badge/TypeScript-4.3-3178C6) ![stack](https://img.shields.io/badge/Stripe-Checkout-635BFF) ![stack](https://img.shields.io/badge/Netlify-Functions-00C7B7)
 
@@ -103,13 +103,21 @@ Nada más: `CatalogService` aplana los proveedores registrados y la UI no cambia
 
 **Precio de venta:** no viene del proveedor. `src/app/core/catalog/pricing.ts` aplica la política de LUMIKO (`margen 2,6`, mínimo 12,90 €, redondeo a 0,10 €) sobre el coste mayorista. Cambiar la política recalcula todo el catálogo.
 
+Cada fuente puede declarar **su propia política** con `meta.pricingPolicy`, porque no todos los proveedores publican precio mayorista: un marketplace publica coste de fábrica, un distribuidor europeo publica PVP. Si el campo falta, se usa `PRICING_POLICY`. El backend aplica exactamente la misma política en `tools/export-catalog.js`, así que el precio que se ve y el que se cobra no pueden divergir.
+
 ## 5. Proveedores integrados
 
-| Proveedor | Adaptador | Productos | Datos |
-|---|---|---|---|
-| Alibaba.com | `core/catalog/alibaba/alibaba.source.ts` | 24 | precio mayorista, MOQ, imágenes, valoraciones, proveedor verificado, país y URL de origen |
+| Proveedor | Adaptador | Productos | Política | Datos |
+|---|---|---|---|---|
+| Alibaba.com (marketplace, CN) | `core/catalog/alibaba/alibaba.source.ts` | 24 | `PRICING_POLICY` (margen 2,6) | precio mayorista, MOQ, imágenes, valoraciones, proveedor verificado, país y URL de origen |
+| ABYstyle · Abysse Corp (distribuidor, FR) | `core/catalog/abystyle/abystyle.source.ts` | 12 | `RETAIL_PURCHASE_POLICY` (margen 1,3 ≈ 23 % bruto) | PVP publicado en EUR, imágenes de la ficha, plazos, referencia del fabricante y URL de origen |
 
-Los datos en bruto viven en `tools/data/batch-a.json` y `tools/data/batch-b.json`; `tools/generate-catalog.js` los normaliza a `src/app/core/catalog/data/alibaba.products.ts` y `tools/export-catalog.js` genera el snapshot en céntimos que consume el backend (`netlify/functions/_lib/catalog.json`, no versionado).
+- **Alibaba.com**: datos en bruto en `tools/data/batch-a.json` y `tools/data/batch-b.json`; `tools/generate-catalog.js` los normaliza a `src/app/core/catalog/data/alibaba.products.ts`.
+- **ABYstyle**: `src/app/core/catalog/data/abystyle.products.ts` es un snapshot **curado a mano** (no generado) desde `https://www.abystyle.com` el 24 oct 2026: 12 lámparas de licencia (One Piece, Naruto, Death Note, Dragon Ball, Harry Potter, Disney), con imagen y ficha reales verificadas. Sus métricas de marketplace (`sold180`, `deliveryRate`, `yearsActive`) no se inventan: se dejan a 0 y la UI las oculta.
+
+`tools/export-catalog.js` recorre **todas** las fuentes registradas y genera el snapshot en céntimos que consume el backend (`netlify/functions/_lib/catalog.json`, no versionado). El snapshot declara un bloque `sources[]` con el recuento y la política de cada proveedor; `npm run verify:backend` comprueba que la suma cuadra con el total.
+
+> Si algún día se abre una cuenta profesional en Abysse Corp (`trade.abyssecorp.com`), el precio pasa a ser mayorista: basta con quitar `pricingPolicy: RETAIL_PURCHASE_POLICY` de `ABYSTYLE_SOURCE_META` para que herede `PRICING_POLICY`. No hay que tocar tienda ni backend.
 
 Cada ficha muestra el proveedor de origen y enlaza a su página real; el precio de venta es el de LUMIKO.
 
@@ -169,19 +177,26 @@ Se definen en Netlify (Site settings → Environment variables) o en un `.env` l
 - Redirección SPA `/* → /index.html 200` (las Functions tienen prioridad).
 - Cabeceras de seguridad (`nosniff`, `DENY`, `Referrer-Policy`, `Permissions-Policy`) y `Cache-Control: no-store` en las Functions.
 
+El proyecto está **enlazado al repositorio Git**, así que el despliegue es continuo:
+
+| Rama | Destino | URL |
+|---|---|---|
+| `main` | producción | https://lumiko-store.netlify.app |
+| `dev` | deploy de previsualización | https://dev--lumiko-store.netlify.app |
+
+Un `git push` a `main` dispara build y publicación; un push a `dev` genera una preview con
+su propia URL y sus propias variables de contexto. El enlace está hecho sobre
+`https://github.com/CarlosPerez93/lumiko-store` (repo privado): Netlify recibe los webhooks
+de GitHub, no hay que desplegar nada a mano. Si se rompe la conexión, se rehace en
+*Project configuration → Build & deploy → Link repository* o desde el plugin de GitHub
+de Netlify, y los ajustes de `netlify.toml` se respetan igual.
+
 ```bash
-npx netlify login          # una vez
-npx netlify sites:create --name lumiko-store
-npx netlify deploy --build --prod
+git push origin dev     # preview
+git push origin main    # producción
 ```
 
-El sitio está publicado en **https://lumiko-store.netlify.app** con despliegue manual
-desde local (el proyecto Netlify **no** está enlazado al repositorio Git todavía, por
-lo que un `git push` no dispara build). Para activar el despliegue continuo hay que
-importar `https://github.com/CarlosPerez93/lumiko-store` desde la UI de Netlify
-(*Project configuration → Build & deploy → Link repository*) y dejar `main` como rama
-de producción y `dev` como rama de previsualización, con los mismos ajustes de
-`netlify.toml`. Mientras no se enlace, el comando de publicación es:
+Si hiciera falta publicar sin pasar por Git (emergencia, sin tocar `main`):
 
 ```bash
 npx netlify deploy --build --prod   # compila, sube dist/lumiko y las Functions
@@ -220,7 +235,9 @@ Todo el movimiento se desactiva con `@media (prefers-reduced-motion: reduce)`.
 ## 10. Personalizar
 
 - **Política de precios**: `src/app/core/catalog/pricing.ts`.
-- **Productos de un proveedor**: `src/app/core/catalog/data/alibaba.products.ts` (o los `tools/data/*.json` + `npm run catalog:build`).
+- **Productos de Alibaba.com**: `tools/data/*.json` + `npm run catalog:build` (no editar el `.ts` generado).
+- **Productos de ABYstyle**: `src/app/core/catalog/data/abystyle.products.ts`, editado a mano.
+- **Tercer proveedor**: ver sección 4 — un adaptador nuevo + una línea en `app.module.ts`.
 - **Cupones y envío**: constantes `COUPONS`, `FREE_SHIPPING` y `SHIPPING_COST` en `src/app/core/cart.service.ts` — y su espejo en el snapshot (`tools/export-catalog.js`), que es el que manda en el cobro.
 - **Colores, fuentes y keyframes**: `tailwind.config.js`.
 - **Países de reparto**: `COUNTRY_CODES` / `ALLOWED_COUNTRIES` en `netlify/functions/_lib/commerce.js` y el array `countries` del checkout.
@@ -231,7 +248,7 @@ Todo el movimiento se desactiva con `@media (prefers-reduced-motion: reduce)`.
 2. **Dominio propio** (`lumiko.shop` o similar) con DNS en Netlify y HTTPS automático.
 3. **Autenticación** solo si se quiere historial de pedidos: hoy el pedido se consulta por `session_id` y el correo de Stripe es la confirmación.
 4. **Base de datos** (Netlify Blobs, Supabase o Postgres) cuando haga falta stock, panel de pedidos o facturas: hoy Stripe es el registro.
-5. **Más proveedores**: segundo adaptador (p. ej. un distribuidor europeo) para acortar plazos de entrega.
+5. **Cuenta profesional con Abysse Corp** (`trade.abyssecorp.com`): pasaría de PVP a mayorista y el margen de esas 12 referencias subiría sin tocar código.
 6. **Precios y stock automáticos**: sustituir el snapshot estático por una sincronización programada con el catálogo del proveedor.
 
 ---

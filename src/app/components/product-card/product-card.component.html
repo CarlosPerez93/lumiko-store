@@ -53,7 +53,7 @@
   <div class="flex flex-1 flex-col p-5">
     <div class="flex items-center justify-between gap-3">
       <span class="truncate text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">{{ categoryLabels[product.category] }}</span>
-      <span class="flex shrink-0 items-center gap-1 text-[11px] font-semibold text-amber-300">
+      <span *ngIf="product.sales > 0" class="flex shrink-0 items-center gap-1 text-[11px] font-semibold text-amber-300">
         <svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5L2.5 9.5l6.6-.9L12 2.6z"/></svg>
         {{ product.rating }}
         <span class="font-normal text-slate-500">({{ product.sales }} vendidos)</span>
