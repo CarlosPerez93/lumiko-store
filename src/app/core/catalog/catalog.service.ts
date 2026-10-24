@@ -28,6 +28,19 @@ export interface CatalogStats {
   avgPrice: number;
 }
 
+const DIACRITICS = /[\u0300-\u036f]/g;
+
+/**
+ * Normaliza texto para búsqueda: minúsculas y sin acentos, para que «lampara»
+ * encuentre «lámpara» y «pinguino» encuentre «pingüino».
+ */
+export function fold(value: string): string {
+  return (value || "")
+    .normalize("NFD")
+    .replace(DIACRITICS, "")
+    .toLowerCase();
+}
+
 export const COUNTRY_LABEL: { [code: string]: string } = {
   CN: "China",
   ES: "España",
@@ -99,18 +112,16 @@ export class CatalogService {
     category: CategoryId | "todos" = "todos",
     sort: CatalogSort = "destacados",
   ): Product[] {
-    const needle = (term || "").trim().toLowerCase();
+    const tokens = fold(term)
+      .trim()
+      .split(/\s+/)
+      .filter((token) => token.length > 0);
     let list = this.byCategory(category);
-    if (needle) {
-      list = list.filter(
-        (product) =>
-          product.name.toLowerCase().indexOf(needle) !== -1 ||
-          product.tagline.toLowerCase().indexOf(needle) !== -1 ||
-          CATEGORY_LABEL[product.category].toLowerCase().indexOf(needle) !==
-            -1 ||
-          product.supplier.name.toLowerCase().indexOf(needle) !== -1 ||
-          product.features.join(" ").toLowerCase().indexOf(needle) !== -1,
-      );
+    if (tokens.length) {
+      list = list.filter((product) => {
+        const haystack = fold(this.searchText(product));
+        return tokens.every((token) => haystack.indexOf(token) !== -1);
+      });
     }
     return this.sorted(list, sort);
   }
@@ -164,6 +175,21 @@ export class CatalogService {
         prices.reduce((sum, price) => sum + price, 0) / prices.length,
       ),
     };
+  }
+
+  /** Texto plano indexable de un producto (se pliega antes de comparar). */
+  private searchText(product: Product): string {
+    return [
+      product.name,
+      product.tagline,
+      CATEGORY_LABEL[product.category],
+      product.supplier.name,
+      product.audience,
+      product.features.join(" "),
+      product.specs.map((spec) => spec.label + " " + spec.value).join(" "),
+    ]
+      .join(" ")
+      .replace(/\s+/g, " ");
   }
 
   // --- normalización -------------------------------------------------------

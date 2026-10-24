@@ -49,7 +49,7 @@
           [(ngModel)]="term"
           placeholder="Buscar por nombre, acabado o proveedor…"
           aria-label="Buscar productos"
-          class="w-full rounded-full border border-white/12 bg-white/[0.05] py-3 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-neon-pink/60"
+          class="w-full rounded-full border border-white/[0.12] bg-white/[0.05] py-3 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-neon-pink/60"
         />
       </div>
 
@@ -62,9 +62,9 @@
           <select
             id="sort-page"
             [(ngModel)]="sort"
-            class="appearance-none rounded-full border border-white/12 bg-white/[0.05] py-2.5 pl-4 pr-10 text-sm font-medium text-white outline-none transition hover:border-white/25"
+            class="appearance-none rounded-full border border-white/[0.12] bg-white/[0.05] py-2.5 pl-4 pr-10 text-sm font-medium text-white outline-none transition hover:border-white/25"
           >
-            <option *ngFor="let option of sortOptions" [ngValue]="option.id" class="bg-ink-800 text-white">{{ option.label }}</option>
+            <option *ngFor="let option of sortOptions" [value]="option.id" class="bg-ink-800 text-white">{{ option.label }}</option>
           </select>
           <svg class="pointer-events-none absolute right-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></svg>
         </div>
@@ -113,7 +113,7 @@
     <div class="mt-12 rounded-3xl border border-white/10 bg-white/[0.02] p-6">
       <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Fuentes integradas</p>
       <div class="mt-4 grid gap-4 sm:grid-cols-2">
-        <div *ngFor="let source of sources" class="rounded-2xl border border-white/8 bg-white/[0.02] p-4">
+        <div *ngFor="let source of sources" class="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4">
           <p class="text-sm font-semibold text-white">{{ source.label }}</p>
           <p class="mt-1 text-xs text-slate-400">
             {{ source.products }} productos · región {{ source.region }} · tipo {{ source.kind }}
