@@ -28,7 +28,7 @@ export class SocialComponent {
   readonly faqs = [
     {
       q: '¿De dónde salen los productos del catálogo?',
-      a: 'De las fichas públicas de proveedores de Alibaba.com. Cada referencia se guarda como una instantánea con fecha dentro del repositorio, así que el precio, el MOQ y el enlace que ves son auditables y reproducibles. En la ficha de cada producto tienes el enlace directo a la publicación original del fabricante.'
+      a: 'De fichas públicas de proveedores: fabricantes del marketplace Alibaba.com y el distribuidor europeo ABYstyle (Abysse Corp, Francia). Cada referencia se guarda como una instantánea con fecha dentro del repositorio, así que el precio, el MOQ y el enlace que ves son auditables y reproducibles. En la ficha de cada producto tienes el enlace directo a la publicación original del proveedor.'
     },
     {
       q: '¿El precio que veo es el precio del proveedor?',
@@ -36,7 +36,7 @@ export class SocialComponent {
     },
     {
       q: '¿Qué significa el MOQ que aparece en la ficha?',
-      a: 'Es la cantidad mínima que el fabricante vende a un distribuidor. La tienda vende por unidades sueltas; el MOQ se muestra como dato de trazabilidad del origen. Si necesitas una cantidad grande, escríbenos y lo revisamos.'
+      a: 'Es la cantidad mínima que el proveedor vende en una sola operación. En los fabricantes del marketplace suele ser un lote; en el distribuidor europeo es 1 unidad. La tienda vende siempre por unidades sueltas, así que el MOQ se muestra como dato de trazabilidad del origen. Si necesitas una cantidad grande, escríbenos y lo revisamos.'
     },
     {
       q: '¿Cómo se procesa el pago?',
@@ -44,7 +44,7 @@ export class SocialComponent {
     },
     {
       q: '¿Cuánto tarda el envío?',
-      a: 'Depende del proveedor y del destino. En cada ficha mostramos el plazo de entrega que publica el fabricante y su tasa de entrega. Al confirmar el pedido te enviamos por email el plazo concreto antes de fabricar.'
+      a: 'Depende del proveedor y del destino. En cada ficha mostramos el plazo de entrega y la tasa de entrega cuando el proveedor los publica. Al confirmar el pedido te enviamos por email el plazo concreto antes de preparar el envío.'
     },
     {
       q: '¿Puedo devolverlo?',

@@ -44,6 +44,7 @@ export function fold(value: string): string {
 export const COUNTRY_LABEL: { [code: string]: string } = {
   CN: "China",
   ES: "España",
+  FR: "Francia",
   US: "Estados Unidos",
   IN: "India",
 };
@@ -77,7 +78,10 @@ export class CatalogService {
       .pipe(take(1))
       .subscribe((groups) => {
         const products = this.normalize(
-          groups.reduce((all, group) => all.concat(group), []),
+          this.adapterList.map((source, index) => ({
+            rows: groups[index] || [],
+            meta: source.meta,
+          })),
         );
         this.index.clear();
         products.forEach((product) => this.index.set(product.id, product));
@@ -194,21 +198,31 @@ export class CatalogService {
 
   // --- normalización -------------------------------------------------------
 
-  private normalize(rows: SupplierProduct[]): Product[] {
+  private normalize(
+    sources: { rows: SupplierProduct[]; meta: ProductSourceMeta }[],
+  ): Product[] {
     const seen: { [id: string]: boolean } = {};
     const products: Product[] = [];
-    for (const row of rows) {
-      if (seen[row.id]) {
-        continue;
+    for (const source of sources) {
+      for (const row of source.rows) {
+        if (seen[row.id]) {
+          continue;
+        }
+        seen[row.id] = true;
+        products.push(this.toProduct(row, source.meta));
       }
-      seen[row.id] = true;
-      products.push(this.toProduct(row));
     }
     return products;
   }
 
-  private toProduct(row: SupplierProduct): Product {
-    const price = retailPrice(row.supplierPriceMin, row.supplierPriceMax);
+  /**
+   * Normaliza una fila de proveedor. La politica de precios la decide la
+   * FUENTE, no la fila: un mayorista y un distribuidor a PVP no pueden
+   * compartir margen.
+   */
+  private toProduct(row: SupplierProduct, meta: ProductSourceMeta): Product {
+    const policy = meta.pricingPolicy || undefined;
+    const price = retailPrice(row.supplierPriceMin, row.supplierPriceMax, policy);
     const supplier: ProductSupplier = {
       id: row.supplier.id,
       name: row.supplier.name,
@@ -251,10 +265,13 @@ export class CatalogService {
       specs,
       sales: row.supplier.sold180,
       audience: row.audience,
-      availability: row.supplier.delivery ? "bajo-pedido" : "disponible",
-      availabilityLabel: row.supplier.delivery
-        ? "Bajo pedido · " + row.supplier.delivery
-        : "Disponible en el proveedor",
+      availability:
+        row.availability || (row.supplier.delivery ? "bajo-pedido" : "disponible"),
+      availabilityLabel:
+        (row.availability || (row.supplier.delivery ? "bajo-pedido" : "disponible")) ===
+        "disponible"
+          ? "Disponible · " + (row.supplier.delivery || "stock en proveedor")
+          : "Bajo pedido · " + row.supplier.delivery,
       buyUrl: row.buyUrl,
       sourceId: row.sourceId,
       sourceLabel: row.sourceLabel,
@@ -277,16 +294,23 @@ export class CatalogService {
         value:
           BUSINESS_TYPE_LABEL[supplier.businessType] || supplier.businessType,
       },
-      { label: "MOQ del fabricante", value: supplier.moqLabel },
+      { label: "Mínimo de compra", value: supplier.moqLabel },
       { label: "Plazo", value: supplier.delivery || "Según disponibilidad" },
-      { label: "Valoración proveedor", value: supplier.rating + " / 5" },
-      { label: "Vendidos (180 días)", value: String(supplier.sold180) },
       { label: "Ref. proveedor", value: row.sourceId },
     ];
+    // Solo se muestran los datos que el proveedor publica de verdad: un
+    // distribuidor europeo no tiene valoraciones ni ventas de marketplace,
+    // y un 0 rotulado como "valoración" sería información falsa.
+    if (supplier.rating) {
+      specs.push({ label: "Valoración proveedor", value: supplier.rating + " / 5" });
+    }
+    if (supplier.sold180) {
+      specs.push({ label: "Vendidos (180 días)", value: String(supplier.sold180) });
+    }
     if (supplier.yearsActive) {
       specs.push({
         label: "Antigüedad",
-        value: supplier.yearsActive + " años en Alibaba.com",
+        value: supplier.yearsActive + " años en " + row.sourceLabel,
       });
     }
     if (supplier.deliveryRate) {

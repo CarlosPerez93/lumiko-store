@@ -79,5 +79,6 @@ export const CATEGORY_LABEL: Record<CategoryId, string> = {
 export const BUSINESS_TYPE_LABEL: { [key: string]: string } = {
   manufacturer: 'Fabricante',
   trading_company: 'Comercializadora',
-  trading: 'Comercializadora'
+  trading: 'Comercializadora',
+  retailer: 'Distribuidor oficial'
 };
