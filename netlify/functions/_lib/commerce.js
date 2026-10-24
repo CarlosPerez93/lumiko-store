@@ -232,11 +232,23 @@ function errorResponse(error) {
     );
     const misconfigured =
       error.type === 'StripeAuthenticationError' || error.code === 'api_key_invalid';
-    return jsonResponse(500, {
+    const body = {
       code: misconfigured ? 'payment_gateway_misconfigured' : 'payment_gateway_error',
       message:
         'El pago con tarjeta no está disponible ahora mismo. Escríbenos y completamos tu pedido sin pasar por la pasarela.'
-    });
+    };
+
+    // Diagnóstico de soporte: solo identificadores del API público de Stripe
+    // (tipo de error y campo rechazado), nunca la clave ni datos del comprador.
+    // Si el problema es de autenticación no se añade nada: el mensaje de Stripe
+    // incluye fragmentos de la clave y aquí no tiene nada que hacer.
+    if (!misconfigured) {
+      body.gateway_type = error.type || 'desconocido';
+      body.gateway_code = error.code || 'sin_codigo';
+      body.gateway_param = error.param || 'sin_parametro';
+      body.gateway_message = String(error.message || '').slice(0, 200);
+    }
+    return jsonResponse(500, body);
   }
 
   const status = isOrderError ? error.status : 500;
