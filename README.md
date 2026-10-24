@@ -7,6 +7,23 @@ Angular 12 + Tailwind 3, catálogo multiproveedor con 24 productos reales de Ali
 
 ---
 
+## 0. Estado de producción (24 oct 2026)
+
+| Comprobación | Resultado |
+|---|---|
+| Sitio | https://lumiko-store.netlify.app (deploy `6adcc00209f098169532574f`) |
+| Arnés `node tools/verify-production.js` | **34/34 correctas, 0 fallos** |
+| Rutas SPA (`/`, `/catalogo`, `/carrito`, `/checkout`, `/pedido`, `/producto/:id`, 404) | todas 200, router sirviendo la app |
+| Responsive a 375×812 (`/carrito` vacío y lleno, `/checkout`, `/pedido`, `/404`, `/catalogo`) | `scrollWidth` = `clientWidth` en todas: **sin overflow horizontal** |
+| Cabeceras de seguridad, Functions, validaciones y metadatos | correctas |
+| Cobro real | **pendiente de claves de Stripe**: hoy el checkout responde `503 payments_not_configured` con un mensaje de negocio, sin filtrar detalles internos |
+
+Los dos únicos puntos abiertos del mandato son los que dependen de credenciales
+externas: `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET` (sección 6) para cerrar el
+pago real, y el dominio propio (sección 11), que el mandato deja como «si corresponde».
+
+---
+
 ## 1. Arrancar en local
 
 ```bash
@@ -126,7 +143,7 @@ Se definen en Netlify (Site settings → Environment variables) o en un `.env` l
 | Variable | Obligatoria | Uso |
 |---|---|---|
 | `STRIPE_SECRET_KEY` | sí | clave secreta de Stripe (test o live). Sin ella el checkout responde `503 payments_not_configured` |
-| `STRIPE_WEBHOOK_SECRET` | sí | secreto de firma del endpoint `/api/stripe-webhook` |
+| `STRIPE_WEBHOOK_SECRET` | sí | secreto de firma del endpoint `/.netlify/functions/stripe-webhook` |
 | `PUBLIC_SITE_URL` | recomendada | URL canónica para `success_url` / `cancel_url` |
 | `LUMIKO_ENV` | automática | `production` / `preview` / `branch`, fijada en `netlify.toml` |
 
@@ -158,12 +175,22 @@ npx netlify sites:create --name lumiko-store
 npx netlify deploy --build --prod
 ```
 
-Para despliegue continuo, enlaza el sitio con `https://github.com/CarlosPerez93/lumiko-store` y deja `main` como rama de producción y `dev` como rama de previsualización.
+El sitio está publicado en **https://lumiko-store.netlify.app** con despliegue manual
+desde local (el proyecto Netlify **no** está enlazado al repositorio Git todavía, por
+lo que un `git push` no dispara build). Para activar el despliegue continuo hay que
+importar `https://github.com/CarlosPerez93/lumiko-store` desde la UI de Netlify
+(*Project configuration → Build & deploy → Link repository*) y dejar `main` como rama
+de producción y `dev` como rama de previsualización, con los mismos ajustes de
+`netlify.toml`. Mientras no se enlace, el comando de publicación es:
+
+```bash
+npx netlify deploy --build --prod   # compila, sube dist/lumiko y las Functions
+```
 
 ## 8. Flujo de trabajo Git
 
 ```
-main        ●── baseline ──────────────────────────────● release (tag v1.0.0)
+main        ●── baseline ──────────────────────────────● release (tag v1.0.1)
              \                                       /
 dev           ●────────────● merge feat/storefront-v1
                             \                        /
@@ -172,6 +199,7 @@ feat/storefront-v1           ● chore → catalog → storefront → payments
 
 - Ramas de trabajo por funcionalidad (`feat/…`), integración en `dev` con `merge --no-ff` y promoción a `main` solo tras verificar en producción.
 - Commits atómicos en imperativo y con ámbito: `feat(catalog):`, `feat(payments):`, `chore(repo):`.
+- Etiquetas: `v1.0.0` en el primer estado funcional desplegado y `v1.0.1` en las correcciones salidas de la verificación en producción.
 - Detalle de cambios en [CHANGELOG.md](CHANGELOG.md).
 
 ## 9. Animaciones
