@@ -5,6 +5,40 @@ Todos los cambios relevantes de LUMIKO se documentan en este fichero.
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/)
 y el versionado [SemVer](https://semver.org/lang/es/).
 
+## [1.1.0] — 2026-10-24
+
+Segundo proveedor europeo y despliegue continuo real.
+
+### Añadido
+
+- **Proveedor ABYstyle (Abysse Corp, FR)**: 12 lámparas de licencia (One Piece,
+  Naruto, Death Note, Dragon Ball, Harry Potter, Disney) en
+  `core/catalog/data/abystyle.products.ts`, con imagen y ficha reales del
+  distribuidor. Nuevo adaptador `core/catalog/abystyle/abystyle.source.ts`
+  registrado con `multi: true`; el catálogo pasa de 24 a **36 productos** sin
+  tocar componentes ni rutas.
+- **Política de precios por fuente**: `ProductSourceMeta.pricingPolicy`. Un
+  marketplace publica coste mayorista (`PRICING_POLICY`, margen 2,6); un
+  distribuidor publica PVP (`RETAIL_PURCHASE_POLICY`, margen 1,3 ≈ 23 % bruto).
+  `CatalogService` y `tools/export-catalog.js` aplican la misma política, así que
+  precio mostrado y precio cobrado coinciden por construcción.
+- Bloque `sources[]` en el snapshot del backend, con recuento y política de cada
+  proveedor.
+- Despliegue continuo: repositorio enlazado a Netlify (`main` → producción,
+  `dev` → preview).
+
+### Cambiado
+
+- `COUNTRY_LABEL` incluye Francia; `BUSINESS_TYPE_LABEL` incluye
+  «Distribuidor oficial».
+- Las métricas que un proveedor no publica (`sold180`, `deliveryRate`,
+  `yearsActive`, valoración) ya no se pintan como `0`: se ocultan con `*ngIf` y
+  se sustituyen por «Según disponibilidad» cuando corresponde.
+- FAQ y textos de portada describen dos tipos de proveedor en lugar de afirmar
+  que todo viene de fábricas del marketplace.
+- `npm run verify:backend` comprueba el catálogo contra el bloque `sources[]` en
+  vez de contra un número fijo.
+
 ## [1.0.1] — 2026-10-24
 
 Correcciones salidas de la verificación del sitio desplegado (navegación real a
