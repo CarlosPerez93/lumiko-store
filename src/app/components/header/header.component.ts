@@ -1,5 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { CartService } from '../../core/cart.service';
+import { CatalogService } from '../../core/catalog/catalog.service';
 
 @Component({
   selector: 'app-header',
@@ -10,13 +11,18 @@ export class HeaderComponent {
   menuOpen = false;
 
   readonly links = [
-    { label: 'Catálogo', href: '#catalogo' },
-    { label: 'Experiencia', href: '#experiencia' },
-    { label: 'Opiniones', href: '#opiniones' },
-    { label: 'FAQ', href: '#faq' }
+    { label: 'Inicio', path: '/' },
+    { label: 'Catálogo', path: '/catalogo' },
+    { label: 'Cómo funciona', path: '/', fragment: 'experiencia' },
+    { label: 'Opiniones', path: '/', fragment: 'opiniones' },
+    { label: 'FAQ', path: '/', fragment: 'faq' }
   ];
 
-  constructor(public cart: CartService) {}
+  constructor(public cart: CartService, private catalog: CatalogService) {}
+
+  get stats() {
+    return this.catalog.stats();
+  }
 
   @HostListener('window:scroll')
   onScroll(): void {

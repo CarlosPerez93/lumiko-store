@@ -1,4 +1,5 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CartLine, CartService, CartState } from '../../core/cart.service';
 import { ToastService } from '../../core/toast.service';
@@ -18,7 +19,11 @@ export class CartDrawerComponent implements OnInit, OnDestroy {
 
   private subs: Subscription[] = [];
 
-  constructor(private cart: CartService, private toast: ToastService) {}
+  constructor(
+    private cart: CartService,
+    private toast: ToastService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.subs.push(this.cart.drawer$.subscribe((open) => (this.open = open)));
@@ -77,14 +82,12 @@ export class CartDrawerComponent implements OnInit, OnDestroy {
     if (!this.state || this.state.count === 0) {
       return;
     }
-    this.toast.show('Demo: el pedido se ha simulado, la pasarela de pago no está conectada.', 'info');
+    this.close();
+    this.router.navigate(['/checkout']);
   }
 
   goToCatalog(): void {
     this.close();
-    const target = document.getElementById('catalogo');
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    this.router.navigate(['/catalogo']);
   }
 }

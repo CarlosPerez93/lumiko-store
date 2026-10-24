@@ -1,6 +1,21 @@
 import { Component } from '@angular/core';
+import { CatalogService, COUNTRY_LABEL } from '../../core/catalog/catalog.service';
+import { BUSINESS_TYPE_LABEL } from '../../core/product.model';
 import { ToastService } from '../../core/toast.service';
 import { accordionAnimation } from '../../shared/animations';
+
+interface SupplierHighlight {
+  id: string;
+  name: string;
+  originLabel: string;
+  businessTypeLabel: string;
+  verified: boolean;
+  rating: number;
+  yearsActive: number;
+  deliveryRate: number;
+  sold180: number;
+  products: number;
+}
 
 @Component({
   selector: 'app-social',
@@ -8,84 +23,96 @@ import { accordionAnimation } from '../../shared/animations';
   animations: [accordionAnimation]
 })
 export class SocialComponent {
-  readonly testimonials = [
-    {
-      name: 'Marta Ruiz',
-      city: 'Valencia',
-      initials: 'MR',
-      quote:
-        'La lámpara Tsukuyomi fue el regalo estrella de cumpleaños. Mi hija la pone en modo sakura todas las noches y ya no hay peleas para apagar la luz.',
-      product: 'Lámpara Tsukuyomi',
-      rating: 5
-    },
-    {
-      name: 'Iván Delgado',
-      city: 'Bilbao',
-      initials: 'ID',
-      quote:
-        'Tengo el proyector y el panel pixel en el despacho. La app va finísima y el modo música es una locura cuando hay visitas.',
-      product: 'Proyector Nebula + Panel Pixel',
-      rating: 5
-    },
-    {
-      name: 'Laura y Nico',
-      city: 'Sevilla',
-      initials: 'LN',
-      quote:
-        'El robot Mochi le cuenta cuentos a nuestro hijo con la luz bajita. Es lo único que ha conseguido que se duerma sin mirar pantallas.',
-      product: 'Robot Mochi',
-      rating: 5
-    }
-  ];
+  readonly couponCode = 'LUMI10';
 
   readonly faqs = [
     {
-      q: '¿Hace falta un hub o una suscripción?',
-      a: 'No. Todos los dispositivos se conectan directamente por Wi-Fi 2,4 GHz y se controlan con la app gratuita. No hay cuotas mensuales ni caja central obligatoria.'
+      q: '¿De dónde salen los productos del catálogo?',
+      a: 'De las fichas públicas de proveedores de Alibaba.com. Cada referencia se guarda como una instantánea con fecha dentro del repositorio, así que el precio, el MOQ y el enlace que ves son auditables y reproducibles. En la ficha de cada producto tienes el enlace directo a la publicación original del fabricante.'
     },
     {
-      q: '¿Son seguras para niños pequeños?',
-      a: 'Sí. Usamos materiales sin BPA, difusores fríos al tacto y fuentes de alimentación certificadas. El Cubo Lumen está indicado desde los 0 años y el resto desde los 5-6 años según modelo.'
+      q: '¿El precio que veo es el precio del proveedor?',
+      a: 'No. El precio grande es el precio de venta de LUMIKO, con IVA incluido. Justo debajo mostramos, por transparencia, el coste de referencia del proveedor y su unidad de venta (por ejemplo, por pieza o por conjunto) y el MOQ que exige.'
+    },
+    {
+      q: '¿Qué significa el MOQ que aparece en la ficha?',
+      a: 'Es la cantidad mínima que el fabricante vende a un distribuidor. La tienda vende por unidades sueltas; el MOQ se muestra como dato de trazabilidad del origen. Si necesitas una cantidad grande, escríbenos y lo revisamos.'
+    },
+    {
+      q: '¿Cómo se procesa el pago?',
+      a: 'Con Stripe Checkout sobre TLS. Los datos de tu tarjeta se introducen en el dominio de Stripe: LUMIKO no los recibe ni los almacena. El importe se recalcula en el servidor antes de crear la sesión de pago, y el pedido se marca como pagado cuando Stripe confirma la firma del webhook.'
     },
     {
       q: '¿Cuánto tarda el envío?',
-      a: '24/48 h en península con seguimiento. Baleares y Canarias entre 3 y 5 días laborables. Envío gratuito a partir de 49 €.'
+      a: 'Depende del proveedor y del destino. En cada ficha mostramos el plazo de entrega que publica el fabricante y su tasa de entrega. Al confirmar el pedido te enviamos por email el plazo concreto antes de fabricar.'
     },
     {
-      q: '¿Puedo devolverlo si no me convence?',
-      a: 'Tienes 30 días desde la recepción, sin justificar el motivo y con recogida gratuita en península. La garantía oficial es de 2 años.'
-    },
-    {
-      q: '¿Funciona sin Wi-Fi?',
-      a: 'Sí. Todos los modelos mantienen control táctil o por mando aunque se caiga la red, y guardan la última escena configurada.'
+      q: '¿Puedo devolverlo?',
+      a: 'Sí, tienes 14 días desde la recepción del pedido para devolverlo en su embalaje original. Escríbenos con la referencia del pedido y te indicamos cómo enviarlo.'
     }
   ];
 
   openFaq: number | null = 0;
 
-  email = '';
-  subscribed = false;
-  newsletterError = '';
+  constructor(private catalog: CatalogService, private toast: ToastService) {}
 
-  constructor(private toast: ToastService) {}
+  get suppliers(): SupplierHighlight[] {
+    const byId: { [id: string]: SupplierHighlight } = {};
+
+    this.catalog.all().forEach((product) => {
+      const supplier = product.supplier;
+      const existing = byId[supplier.id];
+      if (existing) {
+        existing.products += 1;
+        return;
+      }
+      byId[supplier.id] = {
+        id: supplier.id,
+        name: supplier.name,
+        originLabel: COUNTRY_LABEL[supplier.country] || supplier.country || 'Origen no indicado',
+        businessTypeLabel: BUSINESS_TYPE_LABEL[supplier.businessType] || 'Proveedor',
+        verified: supplier.verified,
+        rating: supplier.rating,
+        yearsActive: supplier.yearsActive,
+        deliveryRate: supplier.deliveryRate,
+        sold180: supplier.sold180,
+        products: 1
+      };
+    });
+
+    return Object.keys(byId)
+      .map((key) => byId[key])
+      .sort(
+        (a, b) =>
+          Number(b.verified) - Number(a.verified) ||
+          b.rating - a.rating ||
+          b.sold180 - a.sold180
+      )
+      .slice(0, 3);
+  }
+
+  get verifiedShare(): number {
+    const stats = this.catalog.stats();
+    return stats.suppliers ? Math.round((stats.verified / stats.suppliers) * 100) : 0;
+  }
 
   toggleFaq(index: number): void {
     this.openFaq = this.openFaq === index ? null : index;
   }
 
-  subscribe(): void {
-    const valid = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(this.email.trim());
-    if (!valid) {
-      this.newsletterError = 'Introduce un correo electrónico válido.';
+  copyCoupon(): void {
+    const nav = navigator as Navigator & { clipboard?: Clipboard };
+    if (nav.clipboard && nav.clipboard.writeText) {
+      nav.clipboard.writeText(this.couponCode).then(
+        () => this.toast.show(`Código ${this.couponCode} copiado`),
+        () => this.toast.show(`Tu código es ${this.couponCode}`, 'info')
+      );
       return;
     }
-    this.newsletterError = '';
-    this.subscribed = true;
-    this.toast.show('¡Bienvenido al club LUMIKO! Revisa tu correo.');
-    this.email = '';
+    this.toast.show(`Tu código es ${this.couponCode}`, 'info');
   }
 
   stars(count: number): number[] {
-    return Array(count).fill(0);
+    return Array(Math.max(0, Math.round(count))).fill(0);
   }
 }

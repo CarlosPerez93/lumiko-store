@@ -1,50 +1,72 @@
-<section id="opiniones" class="scroll-mt-24 py-20 lg:py-24">
+<section id="proveedores" class="scroll-mt-24 py-20 lg:py-24">
   <div class="container-x">
-    <!-- Opiniones -->
+    <!-- Proveedores -->
     <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between reveal" appReveal>
       <div class="max-w-2xl">
-        <span class="eyebrow"><span class="h-px w-8 bg-neon-pink"></span> Opiniones reales</span>
-        <h2 class="section-title mt-4 balance">1.842 habitaciones ya están encendidas</h2>
+        <span class="eyebrow"><span class="h-px w-8 bg-neon-pink"></span> Quién fabrica</span>
+        <h2 class="section-title mt-4 balance">Los proveedores detrás del catálogo</h2>
+        <p class="mt-4 text-[15px] leading-relaxed text-slate-400">
+          Datos públicos de cada fabricante: país, antigüedad, valoración y tasa de entrega.
+          Sin intermediarios inventados.
+        </p>
       </div>
       <div class="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4">
-        <span class="font-display text-3xl font-extrabold text-white">4,9</span>
+        <span class="font-display text-3xl font-extrabold text-white">{{ verifiedShare }}%</span>
         <div>
-          <div class="flex gap-0.5 text-amber-300">
-            <svg *ngFor="let s of stars(5)" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5L2.5 9.5l6.6-.9L12 2.6z"/></svg>
-          </div>
-          <p class="mt-1 text-[11px] text-slate-500">Valoración media verificada</p>
+          <p class="text-[12px] font-semibold text-white">proveedores verificados</p>
+          <p class="mt-0.5 text-[11px] text-slate-500">según la ficha pública del marketplace</p>
         </div>
       </div>
     </div>
 
     <div class="mt-10 grid gap-5 lg:grid-cols-3">
       <article
-        *ngFor="let item of testimonials; let i = index"
+        *ngFor="let supplier of suppliers; let i = index"
         class="card-surface flex flex-col p-6 reveal"
         appReveal
         [appRevealDelay]="i * 110"
       >
         <div class="flex items-center justify-between">
-          <div class="flex gap-0.5 text-amber-300">
-            <svg *ngFor="let s of stars(item.rating)" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5L2.5 9.5l6.6-.9L12 2.6z"/></svg>
+          <div class="flex items-center gap-1 text-amber-300">
+            <svg *ngFor="let s of stars(5); let si = index" class="h-3.5 w-3.5" [ngClass]="si < supplier.rating ? 'text-amber-300' : 'text-white/10'" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5L2.5 9.5l6.6-.9L12 2.6z"/></svg>
+            <span class="ml-1 text-[11px] font-semibold text-white">{{ supplier.rating | number: '1.1-1' }}</span>
           </div>
-          <span class="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-neon-lime">
+          <span
+            *ngIf="supplier.verified"
+            class="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-neon-lime"
+          >
             <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>
-            Verificada
+            Verificado
           </span>
+          <span *ngIf="!supplier.verified" class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Sin verificar</span>
         </div>
 
-        <p class="mt-4 flex-1 text-[13.5px] leading-relaxed text-slate-300">“{{ item.quote }}”</p>
+        <h3 class="mt-4 font-display text-[16px] font-semibold leading-snug text-white">{{ supplier.name }}</h3>
+        <p class="mt-1 text-[12px] text-slate-500">{{ supplier.originLabel }} · {{ supplier.businessTypeLabel }} · {{ supplier.yearsActive }} años</p>
 
-        <div class="mt-6 flex items-center gap-3 border-t border-white/10 pt-5">
-          <span class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-neon-pink/80 to-neon-violet/80 text-[11px] font-bold text-white">
-            {{ item.initials }}
-          </span>
-          <div class="min-w-0">
-            <p class="text-[13px] font-semibold text-white">{{ item.name }}</p>
-            <p class="text-[11px] text-slate-500">{{ item.city }} · compró {{ item.product }}</p>
+        <dl class="mt-5 grid grid-cols-3 gap-2 border-t border-white/10 pt-4 text-center">
+          <div>
+            <dt class="font-display text-sm font-bold text-white">{{ supplier.products }}</dt>
+            <dd class="mt-0.5 text-[10px] uppercase tracking-wider text-slate-500">productos</dd>
           </div>
-        </div>
+          <div>
+            <dt class="font-display text-sm font-bold text-white">{{ supplier.deliveryRate | number: '1.0-0' }}%</dt>
+            <dd class="mt-0.5 text-[10px] uppercase tracking-wider text-slate-500">entrega</dd>
+          </div>
+          <div>
+            <dt class="font-display text-sm font-bold text-white">{{ supplier.sold180 | number: '1.0-0' }}</dt>
+            <dd class="mt-0.5 text-[10px] uppercase tracking-wider text-slate-500">vendidos</dd>
+          </div>
+        </dl>
+
+        <a
+          [routerLink]="['/catalogo']"
+          [queryParams]="{ q: supplier.name }"
+          class="mt-5 inline-flex items-center gap-2 text-[12px] font-semibold text-neon-pink transition hover:text-white"
+        >
+          Ver sus productos
+          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </a>
       </article>
     </div>
   </div>
@@ -58,15 +80,14 @@
   <div class="container-x grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
     <div class="reveal" appReveal>
       <span class="eyebrow"><span class="h-px w-8 bg-neon-cyan"></span> Dudas frecuentes</span>
-      <h2 class="section-title mt-4 balance">Lo que todo el mundo pregunta antes de comprar</h2>
+      <h2 class="section-title mt-4 balance">Lo que conviene saber antes de comprar</h2>
       <p class="mt-4 text-[15px] leading-relaxed text-slate-400">
-        Y si tu duda no está aquí, escribimos personas de verdad: respondemos en menos de 24 h
-        laborables.
+        Cómo se eligen los productos, cómo se calcula el precio y cómo se procesa el pago.
       </p>
 
       <div class="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-        <p class="text-sm font-semibold text-white">¿Hablamos?</p>
-        <p class="mt-1 text-[13px] text-slate-400">hola@lumiko.store · +34 900 000 000</p>
+        <p class="text-sm font-semibold text-white">¿Te queda una duda?</p>
+        <p class="mt-1 text-[13px] text-slate-400">hola@lumiko.store</p>
         <a href="mailto:hola@lumiko.store" class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-neon-pink transition hover:text-white">
           Escribir al equipo
           <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"/></svg>
@@ -97,7 +118,7 @@
   </div>
 </section>
 
-<!-- Newsletter -->
+<!-- Cupón -->
 <section class="pb-20 lg:pb-28">
   <div class="container-x">
     <div class="relative overflow-hidden rounded-[2rem] border border-white/12 bg-gradient-to-br from-neon-violet/25 via-ink-700 to-neon-pink/20 p-8 sm:p-12 reveal" appReveal>
@@ -108,41 +129,30 @@
         <div>
           <span class="eyebrow"><span class="h-px w-8 bg-neon-lime"></span> Club LUMIKO</span>
           <h2 class="mt-4 font-display text-2xl font-bold leading-tight text-white sm:text-[34px]">
-            −10 % en tu primera luz<br class="hidden sm:block" /> y acceso a ediciones limitadas
+            −10 % en tu primer pedido<br class="hidden sm:block" /> con el código {{ couponCode }}
           </h2>
           <p class="mt-3 max-w-md text-sm leading-relaxed text-slate-300">
-            Una vez al mes: escenas nuevas, lanzamientos anime y ofertas que no publicamos en la web.
-            Cero spam, prometido.
+            Se aplica en el carrito, sobre el subtotal. También hay un −15 % con
+            <span class="font-semibold text-white">ANIME15</span> en lámparas y proyectores seleccionados.
           </p>
         </div>
 
         <div>
-          <form *ngIf="!subscribed" (ngSubmit)="subscribe()" class="flex flex-col gap-3 sm:flex-row">
-            <div class="flex-1">
-              <label for="newsletter-email" class="sr-only">Correo electrónico</label>
-              <input
-                id="newsletter-email"
-                type="email"
-                name="email"
-                [(ngModel)]="email"
-                placeholder="tu@correo.com"
-                class="w-full rounded-full border border-white/20 bg-ink-900/60 px-5 py-3.5 text-sm text-white placeholder:text-slate-500 focus:border-neon-cyan focus:outline-none"
-              />
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <div class="flex flex-1 items-center justify-between rounded-full border border-dashed border-white/30 bg-ink-900/60 px-5 py-3.5">
+              <span class="font-display text-sm font-bold tracking-[0.2em] text-neon-lime">{{ couponCode }}</span>
+              <span class="text-[11px] uppercase tracking-wider text-slate-400">−10 %</span>
             </div>
-            <button type="submit" class="btn-primary whitespace-nowrap">Quiero el −10 %</button>
-          </form>
-
-          <div *ngIf="subscribed" class="flex items-center gap-3 rounded-2xl border border-neon-lime/40 bg-neon-lime/10 px-5 py-4">
-            <span class="flex h-9 w-9 items-center justify-center rounded-full bg-neon-lime text-ink-900">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>
-            </span>
-            <p class="text-sm font-medium text-white">¡Dentro! Tu código <span class="font-bold text-neon-lime">LUMI10</span> ya está listo.</p>
+            <button type="button" class="btn-primary whitespace-nowrap" (click)="copyCoupon()">Copiar código</button>
           </div>
 
-          <p *ngIf="newsletterError" class="mt-2 text-[12px] text-neon-pink">{{ newsletterError }}</p>
           <p class="mt-3 text-[11px] leading-relaxed text-slate-400/80">
-            Al suscribirte aceptas la política de privacidad. Puedes darte de baja con un clic.
+            Se introduce en el carrito, antes de pagar. Un uso por pedido.
           </p>
+          <a routerLink="/catalogo" class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-neon-lime">
+            Ir al catálogo
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"/></svg>
+          </a>
         </div>
       </div>
     </div>

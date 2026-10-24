@@ -1,0 +1,129 @@
+<section class="relative pb-20 pt-28 sm:pt-32 lg:pt-36">
+  <div class="pointer-events-none absolute inset-0 -z-10">
+    <div class="aurora aurora-c opacity-50"></div>
+    <div class="absolute inset-0 grid-lines opacity-30"></div>
+  </div>
+
+  <div class="container-x">
+    <nav class="flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-slate-500" aria-label="Pasos de compra">
+      <a routerLink="/carrito" class="transition hover:text-white">Carrito</a>
+      <span aria-hidden="true">→</span>
+      <span class="text-neon-pink">Datos y pago</span>
+      <span aria-hidden="true">→</span>
+      <span>Confirmación</span>
+    </nav>
+
+    <h1 class="section-title mt-4 text-[32px] sm:text-[42px]">Checkout</h1>
+
+    <div class="mt-8 grid gap-8 lg:grid-cols-[1.35fr_0.9fr] lg:gap-10">
+      <!-- Formulario -->
+      <form [formGroup]="form" (ngSubmit)="pay()" novalidate class="rounded-[1.75rem] border border-white/10 bg-white/[0.02] p-6 sm:p-8">
+        <h2 class="font-display text-lg font-semibold text-white">Datos de envío</h2>
+        <p class="mt-1 text-[11px] text-slate-500">Los usamos solo para preparar y entregar tu pedido.</p>
+
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+          <div class="sm:col-span-2">
+            <label for="name" class="field-label">Nombre y apellidos</label>
+            <input id="name" type="text" formControlName="name" autocomplete="name" class="field-input" placeholder="Ada Lovelace" />
+            <p *ngIf="isInvalid('name')" class="field-error">Escribe tu nombre completo.</p>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="email" class="field-label">Correo electrónico</label>
+            <input id="email" type="email" formControlName="email" autocomplete="email" class="field-input" placeholder="tucorreo@dominio.com" />
+            <p *ngIf="isInvalid('email')" class="field-error">Necesitamos un correo válido para enviarte la confirmación.</p>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="address" class="field-label">Dirección</label>
+            <input id="address" type="text" formControlName="address" autocomplete="street-address" class="field-input" placeholder="Calle, número, piso" />
+            <p *ngIf="isInvalid('address')" class="field-error">La dirección debe tener al menos 6 caracteres.</p>
+          </div>
+
+          <div>
+            <label for="city" class="field-label">Ciudad</label>
+            <input id="city" type="text" formControlName="city" autocomplete="address-level2" class="field-input" placeholder="Madrid" />
+            <p *ngIf="isInvalid('city')" class="field-error">Indica tu ciudad.</p>
+          </div>
+
+          <div>
+            <label for="postalCode" class="field-label">Código postal</label>
+            <input id="postalCode" type="text" formControlName="postalCode" autocomplete="postal-code" class="field-input" placeholder="28001" />
+            <p *ngIf="isInvalid('postalCode')" class="field-error">Código postal no válido.</p>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="country" class="field-label">País</label>
+            <select id="country" formControlName="country" class="field-input">
+              <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
+            </select>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="notes" class="field-label">Notas para la entrega <span class="font-normal text-slate-600">(opcional)</span></label>
+            <textarea id="notes" formControlName="notes" rows="3" class="field-input resize-none" placeholder="Portal, horario preferido, referencias…"></textarea>
+          </div>
+        </div>
+
+        <div *ngIf="errorMessage" class="mt-5 flex items-start gap-2 rounded-xl border border-neon-pink/40 bg-neon-pink/10 p-3 text-[12px] text-neon-pink" role="alert">
+          <svg class="mt-0.5 h-4 w-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M12 8v4m0 3h.01"/></svg>
+          <span>{{ errorMessage }}</span>
+        </div>
+
+        <button type="submit" class="btn-primary mt-6 w-full" [disabled]="submitting">
+          <svg *ngIf="submitting" class="h-4 w-4 animate-spin" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 3a9 9 0 1 0 9 9"/></svg>
+          {{ submitting ? 'Conectando con la pasarela…' : 'Pagar con Stripe' }}
+        </button>
+
+        <p class="mt-3 text-center text-[10px] leading-relaxed text-slate-600">
+          Al continuar te llevamos a la pasarela segura de Stripe. LUMIKO no almacena ni ve los datos de tu tarjeta.
+        </p>
+      </form>
+
+      <!-- Resumen -->
+      <aside *ngIf="state as s" class="h-fit rounded-[1.75rem] border border-white/10 bg-ink-800/80 p-6 lg:sticky lg:top-28">
+        <h2 class="font-display text-lg font-semibold text-white">Tu pedido</h2>
+
+        <ul class="mt-4 space-y-3">
+          <li *ngFor="let line of s.lines; trackBy: trackById" class="flex items-center gap-3">
+            <div class="h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-ink-800">
+              <img [src]="line.product.image" [alt]="line.product.name" class="h-full w-full object-cover" loading="lazy" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-[12px] font-medium text-white">{{ line.product.name }}</p>
+              <p class="text-[10px] text-slate-500">{{ line.qty }} × {{ line.product.price | currency: 'EUR' : 'symbol' : '1.2-2' }}</p>
+            </div>
+            <span class="shrink-0 text-[12px] font-semibold text-white">{{ line.product.price * line.qty | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+          </li>
+        </ul>
+
+        <dl class="mt-5 space-y-2.5 border-t border-white/10 pt-4 text-[13px]">
+          <div class="flex items-center justify-between">
+            <dt class="text-slate-400">Subtotal</dt>
+            <dd class="text-white">{{ s.subtotal | currency: 'EUR' : 'symbol' : '1.2-2' }}</dd>
+          </div>
+          <div *ngIf="s.discount > 0" class="flex items-center justify-between">
+            <dt class="text-slate-400">Descuento {{ s.coupon }}</dt>
+            <dd class="text-neon-lime">-{{ s.discount | currency: 'EUR' : 'symbol' : '1.2-2' }}</dd>
+          </div>
+          <div class="flex items-center justify-between">
+            <dt class="text-slate-400">Envío</dt>
+            <dd [ngClass]="s.shipping === 0 ? 'text-neon-lime' : 'text-white'">
+              {{ s.shipping === 0 ? 'Gratis' : (s.shipping | currency: 'EUR' : 'symbol' : '1.2-2') }}
+            </dd>
+          </div>
+          <div class="flex items-center justify-between border-t border-white/10 pt-3">
+            <dt class="font-display text-base font-semibold text-white">Total</dt>
+            <dd class="font-display text-xl font-bold text-white">{{ s.total | currency: 'EUR' : 'symbol' : '1.2-2' }}</dd>
+          </div>
+        </dl>
+
+        <div class="mt-5 flex flex-wrap gap-2">
+          <span class="pill">Stripe Checkout</span>
+          <span class="pill">TLS 1.3</span>
+          <span class="pill">Confirmación por email</span>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>

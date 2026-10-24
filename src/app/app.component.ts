@@ -1,41 +1,47 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, Subscription } from 'rxjs';
+import { Title } from '@angular/platform-browser';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { CartService } from './core/cart.service';
-import { Product } from './core/product.model';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit, OnDestroy {
-  private selectedSubject = new BehaviorSubject<Product | null>(null);
-  readonly selected$ = this.selectedSubject.asObservable();
-
   private subs: Subscription[] = [];
 
-  constructor(private cart: CartService) {}
+  constructor(
+    private cart: CartService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private title: Title
+  ) {}
 
   ngOnInit(): void {
     this.subs.push(
-      combineLatest([this.cart.drawer$, this.selected$]).subscribe(([drawerOpen, selected]) => {
+      this.cart.drawer$.subscribe((drawerOpen) => {
         if (typeof document !== 'undefined') {
-          const locked = !!(drawerOpen || selected);
-          document.body.style.overflow = locked ? 'hidden' : '';
-          document.documentElement.style.overflow = locked ? 'hidden' : '';
+          document.body.style.overflow = drawerOpen ? 'hidden' : '';
+          document.documentElement.style.overflow = drawerOpen ? 'hidden' : '';
         }
+      })
+    );
+
+    this.subs.push(
+      this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+        let current = this.route.firstChild;
+        while (current && current.firstChild) {
+          current = current.firstChild;
+        }
+        const data = current && current.snapshot ? current.snapshot.data : null;
+        this.title.setTitle((data && data.title) || 'LUMIKO · Luz anime para casa');
       })
     );
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach((s) => s.unsubscribe());
-  }
-
-  openProduct(product: Product): void {
-    this.selectedSubject.next(product);
-  }
-
-  closeProduct(): void {
-    this.selectedSubject.next(null);
+    this.subs.forEach((sub) => sub.unsubscribe());
   }
 }

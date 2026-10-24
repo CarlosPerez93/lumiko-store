@@ -1,0 +1,19 @@
+# Normaliza finales de línea: el repositorio guarda LF, el checkout en Windows usa CRLF.
+* text=auto eol=lf
+
+# Binarios: nunca normalizar
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+
+# Archivos que deben conservar CRLF por compatibilidad
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Lockfiles y snapshots: sin merge automático
+package-lock.json merge=binary
