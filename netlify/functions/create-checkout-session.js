@@ -8,13 +8,22 @@
 const commerce = require('./_lib/commerce');
 
 function stripeClient() {
-  const key = process.env.STRIPE_SECRET_KEY;
+  // El panel de Netlify conserva saltos de línea y espacios al pegar: una clave
+  // con un `\n` final la rechaza Stripe aunque sea correcta.
+  const key = (process.env.STRIPE_SECRET_KEY || '').trim();
   if (!key) {
     return null;
   }
-  // require diferido: si Stripe no está instalado, el error es explícito y no
-  // tumba el arranque de la función.
-  const Stripe = require('stripe');
+  // require diferido: si Stripe no viaja en el despliegue, se responde 503
+  // (pasarela sin activar) en lugar de un 500 opaco que parezca un fallo del
+  // pedido.
+  let Stripe;
+  try {
+    Stripe = require('stripe');
+  } catch (loadError) {
+    console.error('[lumiko] la dependencia stripe no está en el despliegue:', loadError.message);
+    return null;
+  }
   return new Stripe(key, { maxNetworkRetries: 2, timeout: 20000 });
 }
 
