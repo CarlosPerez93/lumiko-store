@@ -190,6 +190,20 @@ async function main() {
     assert.strictEqual(res.statusCode, 503);
     assert.strictEqual(JSON.parse(res.body).code, 'payments_not_configured');
   });
+  await check('una clave con solo espacios cuenta como ausente -> 503', async () => {
+    const previous = process.env.STRIPE_SECRET_KEY;
+    process.env.STRIPE_SECRET_KEY = '   \n  ';
+    const res = await createSession.handler(
+      postEvent({ items: [{ id: products[0].id, qty: 1 }], customer: CUSTOMER, coupon: null })
+    );
+    if (previous) {
+      process.env.STRIPE_SECRET_KEY = previous;
+    } else {
+      delete process.env.STRIPE_SECRET_KEY;
+    }
+    assert.strictEqual(res.statusCode, 503);
+    assert.strictEqual(JSON.parse(res.body).code, 'payments_not_configured');
+  });
   await check('get-order sin session_id -> 400', async () => {
     const res = await getOrder.handler({ httpMethod: 'GET', queryStringParameters: null });
     assert.strictEqual(res.statusCode, 400);
@@ -249,6 +263,38 @@ async function main() {
     delete process.env.STRIPE_SECRET_KEY;
     assert.strictEqual(res.statusCode, 400);
     assert.strictEqual(JSON.parse(res.body).code, 'invalid_signature');
+  });
+
+  console.log('\nRespuesta ante errores de pasarela');
+  const stripeError = (type, code) => ({ type: type, code: code, message: 'detalle interno sk_test_secreto' });
+  const silently = (fn) => {
+    const original = console.error;
+    console.error = () => {};
+    try {
+      return fn();
+    } finally {
+      console.error = original;
+    }
+  };
+
+  await check('clave de Stripe inválida -> payment_gateway_misconfigured', () => {
+    const res = silently(() => commerce.errorResponse(stripeError('StripeAuthenticationError', 'api_key_invalid')));
+    assert.strictEqual(res.statusCode, 500);
+    assert.strictEqual(JSON.parse(res.body).code, 'payment_gateway_misconfigured');
+  });
+  await check('otro error de Stripe -> payment_gateway_error', () => {
+    const res = silently(() => commerce.errorResponse(stripeError('StripeInvalidRequestError', 'parameter_invalid')));
+    assert.strictEqual(res.statusCode, 500);
+    assert.strictEqual(JSON.parse(res.body).code, 'payment_gateway_error');
+  });
+  await check('el error de pasarela no filtra detalles internos', () => {
+    const res = silently(() => commerce.errorResponse(stripeError('StripeAuthenticationError', 'api_key_invalid')));
+    assert.ok(!/sk_test|Stripe|api_key_invalid/.test(res.body), 'la respuesta filtra detalles internos');
+  });
+  await check('un error no controlado sigue siendo internal_error', () => {
+    const res = silently(() => commerce.errorResponse(new Error('boom')));
+    assert.strictEqual(res.statusCode, 500);
+    assert.strictEqual(JSON.parse(res.body).code, 'internal_error');
   });
 
   console.log('\n' + passed + ' comprobaciones correctas, ' + failures.length + ' fallos');

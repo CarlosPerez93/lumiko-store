@@ -20,11 +20,17 @@ const HANDLED = [
 ];
 
 function stripeClient() {
-  const key = process.env.STRIPE_SECRET_KEY;
+  const key = (process.env.STRIPE_SECRET_KEY || '').trim();
   if (!key) {
     return null;
   }
-  const Stripe = require('stripe');
+  let Stripe;
+  try {
+    Stripe = require('stripe');
+  } catch (loadError) {
+    console.error('[lumiko] la dependencia stripe no está en el despliegue:', loadError.message);
+    return null;
+  }
   return new Stripe(key, { maxNetworkRetries: 2, timeout: 20000 });
 }
 
@@ -40,7 +46,9 @@ exports.handler = async function (event) {
     return commerce.jsonResponse(405, { code: 'method_not_allowed', message: 'Método no permitido.' });
   }
 
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  // Igual que la clave: el panel guarda el salto de línea del pegado y eso
+  // invalida cualquier firma.
+  const secret = (process.env.STRIPE_WEBHOOK_SECRET || '').trim();
   const stripe = stripeClient();
 
   if (!secret || !stripe) {

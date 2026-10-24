@@ -215,6 +215,30 @@ function jsonResponse(statusCode, payload, extraHeaders) {
 
 function errorResponse(error) {
   const isOrderError = error && error.name === 'OrderError';
+
+  // Los errores de Stripe se contestan aparte: cuando la pasarela está mal
+  // configurada (clave inválida, cuenta sin activar) reintentar no arregla
+  // nada, así que no se le puede decir al comprador «inténtalo en unos
+  // segundos». El detalle va al log, nunca a la respuesta.
+  const isGatewayError =
+    Boolean(error) && typeof error.type === 'string' && error.type.indexOf('Stripe') === 0;
+
+  if (isGatewayError) {
+    console.error(
+      '[lumiko] error de pasarela:',
+      error.type,
+      error.code || '',
+      error.message || ''
+    );
+    const misconfigured =
+      error.type === 'StripeAuthenticationError' || error.code === 'api_key_invalid';
+    return jsonResponse(500, {
+      code: misconfigured ? 'payment_gateway_misconfigured' : 'payment_gateway_error',
+      message:
+        'El pago con tarjeta no está disponible ahora mismo. Escríbenos y completamos tu pedido sin pasar por la pasarela.'
+    });
+  }
+
   const status = isOrderError ? error.status : 500;
   const code = isOrderError ? error.code : 'internal_error';
   const message = isOrderError
