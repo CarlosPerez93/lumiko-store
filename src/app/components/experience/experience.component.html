@@ -78,7 +78,7 @@
       <div class="relative reveal reveal-right" appReveal [appRevealDelay]="120">
         <div class="pointer-events-none absolute inset-0 -z-10 mx-auto h-72 w-72 rounded-full bg-neon-violet/25 blur-[90px]"></div>
 
-        <div class="relative rounded-[2rem] border border-white/12 bg-ink-800/80 p-6 shadow-card backdrop-blur sm:p-8">
+        <div class="relative rounded-[2rem] border border-white/[0.12] bg-ink-800/80 p-6 shadow-card backdrop-blur sm:p-8">
           <p class="text-[10px] uppercase tracking-[0.24em] text-slate-500">Fuentes conectadas</p>
 
           <ul class="mt-5 space-y-3">
@@ -90,7 +90,7 @@
                 <p class="truncate text-sm font-semibold text-white">{{ source.label }}</p>
                 <p class="mt-0.5 text-[11px] text-slate-500">{{ source.products }} productos · snapshot {{ source.generatedAt }}</p>
               </div>
-              <span class="rounded-full bg-neon-lime/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-neon-lime">activo</span>
+              <span class="rounded-full bg-neon-lime/[0.15] px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-neon-lime">activo</span>
             </li>
           </ul>
 
@@ -110,11 +110,11 @@
     </div>
 
     <!-- Compra protegida -->
-    <div class="relative mt-20 overflow-hidden rounded-[2rem] border border-white/12 bg-gradient-to-r from-ink-700 via-ink-800 to-ink-700 reveal" appReveal>
+    <div class="relative mt-20 overflow-hidden rounded-[2rem] border border-white/[0.12] bg-gradient-to-r from-ink-700 via-ink-800 to-ink-700 reveal" appReveal>
       <div class="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-neon-pink/25 blur-[80px]"></div>
       <div class="relative grid gap-8 p-7 sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
         <div>
-          <span class="inline-flex items-center gap-2 rounded-full bg-neon-lime/15 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-neon-lime">
+          <span class="inline-flex items-center gap-2 rounded-full bg-neon-lime/[0.15] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-neon-lime">
             Pago seguro
           </span>
           <h3 class="mt-4 font-display text-2xl font-bold text-white sm:text-3xl">Stripe Checkout, sin datos de tarjeta en la tienda</h3>

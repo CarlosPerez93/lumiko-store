@@ -24,11 +24,11 @@ export class ProductCardComponent {
   get badgeClasses(): string {
     switch (this.product.badgeTone) {
       case 'cyan':
-        return 'bg-neon-cyan/15 text-neon-cyan border-neon-cyan/40';
+        return 'bg-neon-cyan/[0.15] text-neon-cyan border-neon-cyan/40';
       case 'lime':
-        return 'bg-neon-lime/15 text-neon-lime border-neon-lime/40';
+        return 'bg-neon-lime/[0.15] text-neon-lime border-neon-lime/40';
       default:
-        return 'bg-neon-pink/15 text-neon-pink border-neon-pink/40';
+        return 'bg-neon-pink/[0.15] text-neon-pink border-neon-pink/40';
     }
   }
 

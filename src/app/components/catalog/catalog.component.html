@@ -21,7 +21,7 @@
           <select
             id="sort"
             [(ngModel)]="sort"
-            class="appearance-none rounded-full border border-white/12 bg-white/[0.05] py-2.5 pl-4 pr-10 text-sm font-medium text-white outline-none transition hover:border-white/25"
+            class="appearance-none rounded-full border border-white/[0.12] bg-white/[0.05] py-2.5 pl-4 pr-10 text-sm font-medium text-white outline-none transition hover:border-white/25"
           >
             <option *ngFor="let option of sortOptions" [ngValue]="option.id" class="bg-ink-800 text-white">{{ option.label }}</option>
           </select>

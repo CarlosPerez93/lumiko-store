@@ -57,7 +57,7 @@
     <div class="relative reveal is-visible reveal-scale">
       <div class="pointer-events-none absolute -inset-6 rounded-[3rem] bg-gradient-to-tr from-neon-pink/25 via-neon-violet/10 to-neon-cyan/25 blur-2xl"></div>
 
-      <div class="relative overflow-hidden rounded-[2rem] border border-white/12 bg-ink-800 shadow-card">
+      <div class="relative overflow-hidden rounded-[2rem] border border-white/[0.12] bg-ink-800 shadow-card">
         <img
           src="assets/img/hero.png"
           alt="Habitación oscura iluminada con lámparas LED de inspiración anime"
@@ -67,13 +67,13 @@
         <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-900 via-ink-900/10 to-transparent"></div>
 
         <!-- Chip superior -->
-        <div class="float-chip absolute left-4 top-4 flex items-center gap-2 rounded-full border border-white/15 bg-ink-900/70 px-3 py-1.5 text-[11px] font-medium text-white backdrop-blur-md">
+        <div class="float-chip absolute left-4 top-4 flex items-center gap-2 rounded-full border border-white/[0.15] bg-ink-900/70 px-3 py-1.5 text-[11px] font-medium text-white backdrop-blur-md">
           <span class="h-1.5 w-1.5 rounded-full bg-neon-cyan shadow-[0_0_10px_2px_rgba(34,211,238,0.9)]"></span>
           <ng-container *ngIf="featured as f">{{ f.supplier.verified ? 'Proveedor verificado' : 'Proveedor' }} · {{ f.sourceLabel }}</ng-container>
         </div>
 
         <!-- Tarjeta flotante de producto -->
-        <div *ngIf="featured as f" class="float-chip float-chip-delay absolute bottom-4 left-4 right-4 flex items-center gap-3 rounded-2xl border border-white/15 bg-ink-900/80 p-3 backdrop-blur-xl sm:right-auto sm:max-w-[320px]">
+        <div *ngIf="featured as f" class="float-chip float-chip-delay absolute bottom-4 left-4 right-4 flex items-center gap-3 rounded-2xl border border-white/[0.15] bg-ink-900/80 p-3 backdrop-blur-xl sm:right-auto sm:max-w-[320px]">
           <a [routerLink]="['/producto', f.id]" class="shrink-0">
             <img [src]="f.image" [alt]="f.name" class="h-14 w-14 rounded-xl object-cover" />
           </a>

@@ -106,7 +106,7 @@
           <span class="font-display text-[15px] font-semibold transition-colors duration-300" [class.text-white]="openFaq === i" [class.text-slate-300]="openFaq !== i">
             {{ faq.q }}
           </span>
-          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-300" [class.border-neon-pink]="openFaq === i" [ngClass]="openFaq === i ? 'bg-neon-pink/15' : 'border-white/15'">
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-300" [class.border-neon-pink]="openFaq === i" [ngClass]="openFaq === i ? 'bg-neon-pink/[0.15]' : 'border-white/[0.15]'">
             <svg class="h-3.5 w-3.5 text-white transition-transform duration-300" [class.rotate-45]="openFaq === i" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
           </span>
         </button>
@@ -121,7 +121,7 @@
 <!-- Cupón -->
 <section class="pb-20 lg:pb-28">
   <div class="container-x">
-    <div class="relative overflow-hidden rounded-[2rem] border border-white/12 bg-gradient-to-br from-neon-violet/25 via-ink-700 to-neon-pink/20 p-8 sm:p-12 reveal" appReveal>
+    <div class="relative overflow-hidden rounded-[2rem] border border-white/[0.12] bg-gradient-to-br from-neon-violet/25 via-ink-700 to-neon-pink/20 p-8 sm:p-12 reveal" appReveal>
       <div class="pointer-events-none absolute inset-0 grain opacity-40"></div>
       <div class="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-neon-cyan/20 blur-[80px]"></div>
 

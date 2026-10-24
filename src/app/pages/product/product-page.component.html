@@ -22,7 +22,7 @@
     <div class="mt-8 grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14">
       <!-- Galería -->
       <div class="reveal is-visible">
-        <div class="relative overflow-hidden rounded-[2rem] border border-white/12 bg-ink-800 shadow-card">
+        <div class="relative overflow-hidden rounded-[2rem] border border-white/[0.12] bg-ink-800 shadow-card">
           <img
             [src]="activeImage"
             [alt]="p.name + ' — ' + p.tagline"
@@ -33,7 +33,7 @@
 
           <div class="absolute left-5 top-5 flex flex-col items-start gap-2">
             <span *ngIf="p.badge" class="rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-widest backdrop-blur-md"
-              [ngClass]="p.badgeTone === 'lime' ? 'border-neon-lime/40 bg-neon-lime/15 text-neon-lime' : 'border-white/20 bg-ink-900/70 text-white'">
+              [ngClass]="p.badgeTone === 'lime' ? 'border-neon-lime/40 bg-neon-lime/[0.15] text-neon-lime' : 'border-white/20 bg-ink-900/70 text-white'">
               {{ p.badge }}
             </span>
             <span class="rounded-full border border-white/10 bg-ink-900/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-slate-300 backdrop-blur-md">
@@ -41,7 +41,7 @@
             </span>
           </div>
 
-          <div class="absolute bottom-5 left-5 flex items-center gap-2 rounded-full border border-white/12 bg-ink-900/75 px-3 py-1.5 text-[11px] font-medium text-white backdrop-blur-md">
+          <div class="absolute bottom-5 left-5 flex items-center gap-2 rounded-full border border-white/[0.12] bg-ink-900/75 px-3 py-1.5 text-[11px] font-medium text-white backdrop-blur-md">
             <span class="h-1.5 w-1.5 rounded-full" [ngClass]="p.availability === 'disponible' ? 'bg-neon-lime' : 'bg-neon-amber'"></span>
             {{ p.availabilityLabel }}
           </div>
@@ -139,7 +139,7 @@
 
         <ul class="mt-5 space-y-2.5">
           <li *ngFor="let feature of p.features" class="flex items-start gap-2.5 text-[13px] text-slate-300">
-            <span class="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-neon-cyan/15 text-neon-cyan">
+            <span class="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-neon-cyan/[0.15] text-neon-cyan">
               <svg class="h-2.5 w-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>
             </span>
             {{ feature }}
@@ -148,7 +148,7 @@
 
         <!-- Cantidad + CTA -->
         <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div class="flex h-12 w-fit items-center rounded-full border border-white/12 bg-white/[0.04]">
+          <div class="flex h-12 w-fit items-center rounded-full border border-white/[0.12] bg-white/[0.04]">
             <button type="button" (click)="changeQty(-1)" class="flex h-12 w-11 items-center justify-center text-slate-300 transition hover:text-white" aria-label="Quitar una unidad">
               <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 12h14"/></svg>
             </button>
@@ -180,7 +180,7 @@
         </div>
 
         <!-- Especificaciones -->
-        <div class="mt-6 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
+        <div class="mt-6 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5">
           <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Ficha técnica y trazabilidad</p>
           <dl class="mt-3 grid grid-cols-1 gap-y-2 text-[12px] sm:grid-cols-2 sm:gap-x-6">
             <div *ngFor="let spec of p.specs" class="flex items-baseline justify-between gap-3 border-b border-white/5 pb-1.5">
