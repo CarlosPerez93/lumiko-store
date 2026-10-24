@@ -30,6 +30,7 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 import { CATALOG_SOURCES } from './core/catalog/product-source';
 import { AlibabaProductSource } from './core/catalog/alibaba/alibaba.source';
+import { AbystyleProductSource } from './core/catalog/abystyle/abystyle.source';
 
 registerLocaleData(localeEs, 'es-ES');
 
@@ -67,7 +68,8 @@ registerLocaleData(localeEs, 'es-ES');
     // Registro de proveedores del catálogo: para añadir uno nuevo basta con
     // implementar ProductSourceAdapter y añadirlo a esta lista.
     // multi:true agrega UN adaptador por línea y Angular los entrega como array.
-    { provide: CATALOG_SOURCES, useValue: new AlibabaProductSource(), multi: true }
+    { provide: CATALOG_SOURCES, useValue: new AlibabaProductSource(), multi: true },
+    { provide: CATALOG_SOURCES, useValue: new AbystyleProductSource(), multi: true }
   ],
   bootstrap: [AppComponent]
 })
