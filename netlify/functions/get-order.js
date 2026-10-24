@@ -7,11 +7,17 @@
 const commerce = require('./_lib/commerce');
 
 function stripeClient() {
-  const key = process.env.STRIPE_SECRET_KEY;
+  const key = (process.env.STRIPE_SECRET_KEY || '').trim();
   if (!key) {
     return null;
   }
-  const Stripe = require('stripe');
+  let Stripe;
+  try {
+    Stripe = require('stripe');
+  } catch (loadError) {
+    console.error('[lumiko] la dependencia stripe no está en el despliegue:', loadError.message);
+    return null;
+  }
   return new Stripe(key, { maxNetworkRetries: 2, timeout: 20000 });
 }
 
@@ -53,6 +59,9 @@ exports.handler = async function (event) {
       email: details.email || null,
       customerName: details.name || (session.metadata && session.metadata.customer_name) || null,
       reference: (session.metadata && session.metadata.reference) || session.client_reference_id || null,
+      // Lo escribe el webhook al confirmar el pago: sirve para saber si el aviso
+      // de Stripe llegó, sin abrir el panel.
+      webhookStatus: (session.metadata && session.metadata.lumiko_status) || null,
       items: lineItems.map((item) => ({
         name: item.description || 'Producto LUMIKO',
         qty: item.quantity || 1,
