@@ -42,7 +42,7 @@ Build de producción:
 
 ```bash
 npm run build               # prebuild exporta el catálogo y compila en dist/lumiko
-npm run verify:backend      # 31 comprobaciones de reglas comerciales y errores
+npm run verify:backend      # 39 comprobaciones de reglas comerciales y errores
 ```
 
 > El proyecto incluye un `.npmrc` con dos ajustes necesarios:
