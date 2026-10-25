@@ -155,6 +155,16 @@ inventarse uno que ya esté registrado.
 2. Escribe el dominio (por ejemplo `lumiko.shop`) y confirma. Netlify lo añade como
    *domain alias* del sitio; la web sigue sirviéndose igual mientras propagas el DNS.
 
+> **Antes de escribirlo, comprueba que el dominio es tuyo.** Netlify guarda como
+> `custom_domain` cualquier dominio que escribas, aunque su DNS apunte a otro sitio y
+> aunque no haya verificación de propiedad. Si el dominio ya está registrado por un
+> tercero, la tienda sigue funcionando en `lumiko-store.netlify.app`, pero el dominio
+> cargará la web del tercero y parecerá que el despliegue está roto — es exactamente lo
+> que pasó con `lumiko.com` (registrado en 2005, DNS en GoDaddy, reenvío a
+> `andrewmelcher.com`), desvinculado el 2026-10-25. Comprobación rápida:
+> `https://rdap.verisign.com/com/v1/domain/<dominio>` debe mostrar tu registrador y tu
+> fecha de alta.
+
 ### B3. Apuntar el DNS — elige una de las dos rutas
 
 **Ruta 1 · Netlify DNS (recomendada).** Netlify te da un juego de *nameservers*. En tu

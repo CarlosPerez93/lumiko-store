@@ -98,6 +98,15 @@ Ejecutada contra el sitio desplegado el 24 de octubre de 2026:
 2. **Dominio propio** (el mandato lo deja como «si corresponde»). Hoy la tienda vive en
    `lumiko-store.netlify.app`; un dominio tipo `lumiko.shop` se añade en Netlify con DNS
    y HTTPS automático, sin cambios de código.
+
+   Aclaración tras la revisión del 2026-10-25: `lumiko.com` **no pertenece a este
+   proyecto**. Está registrado desde 2005 en GoDaddy, su DNS no apunta a Netlify y
+   reenvía a `andrewmelcher.com`. Netlify lo aceptaba como `custom_domain` del sitio
+   aunque nunca se verificó la propiedad, y esa asociación era la que hacía que la
+   tienda pareciera «rota». Se ha desvinculado (`custom_domain` y `domain_aliases`
+   vacíos): el sitio queda canónico en `https://lumiko-store.netlify.app`, con
+   `http → 301 https` y certificado válido. Para tener dominio propio hace falta uno
+   realmente en propiedad y seguir la Parte B de la guía.
 3. ~~**Despliegue continuo.**~~ **Resuelto.** El repositorio está enlazado a Netlify:
     `main` despliega a producción y `dev` genera preview. Verificado con un build real
     disparado desde GitHub (`Production · main@38f1dd2`, 1 m 3 s), no con un deploy local.
