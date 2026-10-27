@@ -10,6 +10,7 @@
  * y la traza de auditoría en los logs de la función.
  */
 const commerce = require('./_lib/commerce');
+const fulfillment = require('./_lib/fulfillment');
 
 const HANDLED = [
   'checkout.session.completed',
@@ -95,14 +96,33 @@ exports.handler = async function (event) {
         ' estado=' + status
     );
 
+    let fulfillmentInfo = null;
+    if (status === 'confirmed') {
+      try {
+        const order = fulfillment.buildFulfillmentOrder(session);
+        const result = await fulfillment.dispatchFulfillmentOrder(order);
+        fulfillmentInfo = {
+          status: result.dispatched ? 'dispatched' : 'logged',
+          profitEur: order.financials.estimatedGrossProfitEur
+        };
+      } catch (fErr) {
+        console.error('[lumiko-fulfillment] error en despacho automático:', fErr.message);
+      }
+    }
+
     try {
+      const updatePayload = {
+        reference: reference,
+        lumiko_status: status,
+        lumiko_event: stripeEvent.type,
+        lumiko_updated_at: new Date().toISOString()
+      };
+      if (fulfillmentInfo) {
+        updatePayload.lumiko_fulfillment = fulfillmentInfo.status;
+        updatePayload.lumiko_profit_eur = String(fulfillmentInfo.profitEur);
+      }
       await stripe.checkout.sessions.update(session.id, {
-        metadata: {
-          reference: reference,
-          lumiko_status: status,
-          lumiko_event: stripeEvent.type,
-          lumiko_updated_at: new Date().toISOString()
-        }
+        metadata: updatePayload
       });
     } catch (updateError) {
       // Un fallo al anotar la metadata no debe provocar reintentos infinitos.

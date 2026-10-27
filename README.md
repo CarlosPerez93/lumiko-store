@@ -42,7 +42,7 @@ Build de producción:
 
 ```bash
 npm run build               # prebuild exporta el catálogo y compila en dist/lumiko
-npm run verify:backend      # 39 comprobaciones de reglas comerciales y errores
+npm run verify:backend      # 43 comprobaciones de reglas comerciales, despacho y errores
 ```
 
 > El proyecto incluye un `.npmrc` con dos ajustes necesarios:
@@ -152,6 +152,7 @@ Se definen en Netlify (Site settings → Environment variables) o en un `.env` l
 |---|---|---|
 | `STRIPE_SECRET_KEY` | sí | clave secreta de Stripe (test o live). Sin ella el checkout responde `503 payments_not_configured` |
 | `STRIPE_WEBHOOK_SECRET` | sí | secreto de firma del endpoint `/.netlify/functions/stripe-webhook` |
+| `FULFILLMENT_WEBHOOK_URL` | opcional | URL de webhook externo (Make, Zapier, n8n, ERP o bot de compras) para despachar automáticamente la orden con el proveedor al cobrar |
 | `PUBLIC_SITE_URL` | recomendada | URL canónica para `success_url` / `cancel_url` |
 | `LUMIKO_ENV` | automática | `production` / `preview` / `branch`, fijada en `netlify.toml` |
 

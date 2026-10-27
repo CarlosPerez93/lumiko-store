@@ -10,9 +10,11 @@ const assert = require('assert');
 
 const libDir = path.join(__dirname, '..', 'netlify', 'functions');
 const commerce = require(path.join(libDir, '_lib', 'commerce.js'));
+const fulfillment = require(path.join(libDir, '_lib', 'fulfillment.js'));
 const createSession = require(path.join(libDir, 'create-checkout-session.js'));
 const getOrder = require(path.join(libDir, 'get-order.js'));
 const webhook = require(path.join(libDir, 'stripe-webhook.js'));
+const fulfillmentOrderHandler = require(path.join(libDir, 'fulfillment-order.js'));
 
 let passed = 0;
 const failures = [];
@@ -263,6 +265,69 @@ async function main() {
     delete process.env.STRIPE_SECRET_KEY;
     assert.strictEqual(res.statusCode, 400);
     assert.strictEqual(JSON.parse(res.body).code, 'invalid_signature');
+  });
+
+  console.log('\nAutomatización de despacho a proveedores (Fulfillment)');
+  await check('extrae la dirección de envío del cliente', () => {
+    const session = {
+      metadata: { customer_name: 'Ana García', customer_address: 'Gran Vía 40' },
+      shipping_details: {
+        name: 'Ana García',
+        address: { line1: 'Gran Vía 40', city: 'Madrid', postal_code: '28013', country: 'ES' },
+        phone: '+34600112233'
+      },
+      customer_email: 'ana@example.com'
+    };
+    const addr = fulfillment.extractShippingAddress(session);
+    assert.strictEqual(addr.recipientName, 'Ana García');
+    assert.strictEqual(addr.city, 'Madrid');
+    assert.strictEqual(addr.countryCode, 'ES');
+    assert.strictEqual(addr.phone, '+34600112233');
+    assert.ok(addr.formattedBlock.includes('Gran Vía 40'));
+  });
+
+  await check('construye la orden de compra calculando coste y beneficio', () => {
+    const session = {
+      id: 'cs_test_mock_123',
+      amount_total: 3930,
+      currency: 'eur',
+      metadata: {
+        reference: 'LMK-TEST001',
+        customer_name: 'Carlos Perez',
+        customer_address: 'Calle Mayor 12',
+        items: 'marco-pixel-32:1'
+      }
+    };
+    const order = fulfillment.buildFulfillmentOrder(session);
+    assert.strictEqual(order.orderReference, 'LMK-TEST001');
+    assert.strictEqual(order.status, 'ready_for_supplier_purchase');
+    assert.strictEqual(order.purchaseList.length, 1);
+    const item = order.purchaseList[0];
+    assert.strictEqual(item.productId, 'marco-pixel-32');
+    assert.ok(item.supplier.buyUrl.includes('alibaba.com'));
+    assert.ok(order.financials.estimatedGrossProfitEur > 0);
+    assert.ok(order.financials.grossProfitMarginPercent > 0);
+    assert.strictEqual(order.actionsSummary.length, 1);
+  });
+
+  await check('despacha orden sin webhook configurado registrando log', async () => {
+    delete process.env.FULFILLMENT_WEBHOOK_URL;
+    const res = await fulfillment.dispatchFulfillmentOrder({
+      orderReference: 'LMK-LOG',
+      stripeSessionId: 'cs_test_log',
+      financials: { chargedToCustomerEur: 40, estimatedSupplierCostEur: 15, estimatedGrossProfitEur: 25 },
+      customerShipping: { recipientName: 'Test', countryCode: 'ES' },
+      purchaseList: []
+    });
+    assert.strictEqual(res.dispatched, false);
+    assert.strictEqual(res.reason, 'no_webhook_configured');
+  });
+
+  await check('fulfillment-order rechaza peticiones no GET o id inválido', async () => {
+    const postRes = await fulfillmentOrderHandler.handler({ httpMethod: 'POST' });
+    assert.strictEqual(postRes.statusCode, 405);
+    const badId = await fulfillmentOrderHandler.handler({ httpMethod: 'GET', queryStringParameters: { session_id: 'bad' } });
+    assert.strictEqual(badId.statusCode, 400);
   });
 
   console.log('\nRespuesta ante errores de pasarela');

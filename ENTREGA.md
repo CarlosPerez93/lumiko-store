@@ -118,7 +118,7 @@ npm install          # dependencias
 npm start            # http://localhost:4200
 npx netlify dev      # http://localhost:8888 con Functions
 npm run build        # compila en dist/lumiko
-npm run verify:backend    # 39 comprobaciones de reglas comerciales y del catálogo
+npm run verify:backend    # 43 comprobaciones de reglas comerciales, despacho y catálogo
 node tools/verify-production.js   # 34 comprobaciones contra producción
 node tools/check-catalog-search.js  # semántica de búsqueda sobre el catálogo real
 npx netlify deploy --build --prod   # publicar

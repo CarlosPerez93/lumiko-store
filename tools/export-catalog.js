@@ -93,7 +93,11 @@ for (const source of SOURCES) {
       sourceLabel: row.sourceLabel,
       supplierName: row.supplier.name,
       supplierCountry: row.supplier.country,
-      supplierUrl: row.buyUrl
+      supplierUrl: row.buyUrl,
+      supplierPriceMin: row.supplierPriceMin || 0,
+      supplierPriceMax: row.supplierPriceMax || 0,
+      supplierMoq: row.moq || 1,
+      supplierUnit: row.unit || 'unidad'
     });
   }
 }
