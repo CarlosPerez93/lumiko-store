@@ -11,10 +11,12 @@ const assert = require('assert');
 const libDir = path.join(__dirname, '..', 'netlify', 'functions');
 const commerce = require(path.join(libDir, '_lib', 'commerce.js'));
 const fulfillment = require(path.join(libDir, '_lib', 'fulfillment.js'));
+const socialPublisher = require(path.join(libDir, '_lib', 'social-publisher.js'));
 const createSession = require(path.join(libDir, 'create-checkout-session.js'));
 const getOrder = require(path.join(libDir, 'get-order.js'));
 const webhook = require(path.join(libDir, 'stripe-webhook.js'));
 const fulfillmentOrderHandler = require(path.join(libDir, 'fulfillment-order.js'));
+const publishSocialHandler = require(path.join(libDir, 'publish-social.js'));
 
 let passed = 0;
 const failures = [];
@@ -328,6 +330,37 @@ async function main() {
     assert.strictEqual(postRes.statusCode, 405);
     const badId = await fulfillmentOrderHandler.handler({ httpMethod: 'GET', queryStringParameters: { session_id: 'bad' } });
     assert.strictEqual(badId.statusCode, 400);
+  });
+
+  console.log('\nAutomatización y despacho de campañas a redes sociales');
+  await check('construye el payload estandarizado para redes', () => {
+    const payload = socialPublisher.buildSocialPayload({
+      title: 'Título test',
+      caption: 'Copy test',
+      videoUrl: 'https://example.com/video.mp4',
+      platforms: ['tiktok', 'instagram'],
+      hashtags: ['#Anime', '#LUMIKO']
+    });
+    assert.ok(payload.campaignId.startsWith('CMP-'));
+    assert.strictEqual(payload.media.type, 'video');
+    assert.strictEqual(payload.media.videoUrl, 'https://example.com/video.mp4');
+    assert.deepStrictEqual(payload.targetPlatforms, ['tiktok', 'instagram']);
+    assert.ok(payload.copywriting.fullFormattedPost.includes('LUMI10'));
+  });
+
+  await check('despacho de redes maneja ausencia de webhook sin error', async () => {
+    delete process.env.SOCIAL_WEBHOOK_URL;
+    const res = await socialPublisher.dispatchToWebhook({ campaignId: 'CMP-TEST' });
+    assert.strictEqual(res.dispatched, false);
+    assert.strictEqual(res.reason, 'no_social_webhook_configured');
+  });
+
+  await check('publish-social responde GET con estado y ejemplo', async () => {
+    const res = await publishSocialHandler.handler({ httpMethod: 'GET' });
+    assert.strictEqual(res.statusCode, 200);
+    const data = JSON.parse(res.body);
+    assert.strictEqual(data.status, 'active');
+    assert.ok(Array.isArray(data.targetPlatformsSupported));
   });
 
   console.log('\nRespuesta ante errores de pasarela');
