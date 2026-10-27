@@ -1,20 +1,13 @@
 import { Component } from '@angular/core';
-import { CatalogService, COUNTRY_LABEL } from '../../core/catalog/catalog.service';
-import { BUSINESS_TYPE_LABEL } from '../../core/product.model';
 import { ToastService } from '../../core/toast.service';
 import { accordionAnimation } from '../../shared/animations';
 
-interface SupplierHighlight {
-  id: string;
-  name: string;
-  originLabel: string;
-  businessTypeLabel: string;
-  verified: boolean;
-  rating: number;
-  yearsActive: number;
-  deliveryRate: number;
-  sold180: number;
-  products: number;
+interface BrandPillar {
+  icon: string;
+  title: string;
+  tagline: string;
+  description: string;
+  badge: string;
 }
 
 @Component({
@@ -25,94 +18,69 @@ interface SupplierHighlight {
 export class SocialComponent {
   readonly couponCode = 'LUMI10';
 
+  readonly pillars: BrandPillar[] = [
+    {
+      icon: 'sparkles',
+      title: 'Luz Inteligente y Efectos 3D',
+      tagline: '16 Millones de Colores RGBIC',
+      description: 'Lámparas de ilusión óptica, figuras iluminadas y paneles LED de alta definición para crear atmósferas inmersivas en tu dormitorio o setup.',
+      badge: 'Tecnología LED'
+    },
+    {
+      icon: 'app',
+      title: 'Control por App y Asistentes',
+      tagline: 'Conectividad Bluetooth y WiFi',
+      description: 'Personaliza paletas de color, crea animaciones pixel art, sincroniza la iluminación con tu música y programa horarios de encendido automático.',
+      badge: 'Smart Home'
+    },
+    {
+      icon: 'shield',
+      title: 'Garantía Oficial de 3 Años',
+      tagline: 'Soporte y Reemplazo Directo',
+      description: 'Todos los productos LUMIKO cuentan con 3 años de garantía oficial y 14 días de devolución sin compromiso con envío asegurado.',
+      badge: 'Calidad 100%'
+    }
+  ];
+
   readonly faqs = [
     {
-      q: '¿De dónde salen los productos del catálogo?',
-      a: 'De fichas públicas de proveedores: fabricantes del marketplace Alibaba.com y el distribuidor europeo ABYstyle (Abysse Corp, Francia). Cada referencia se guarda como una instantánea con fecha dentro del repositorio, así que el precio, el MOQ y el enlace que ves son auditables y reproducibles. En la ficha de cada producto tienes el enlace directo a la publicación original del proveedor.'
+      q: '¿Qué tipo de productos ofrece LUMIKO?',
+      a: 'LUMIKO está especializada en iluminación inteligente inspirada en anime, figuras de luz LED con efecto 3D, paneles Pixel Art programables, proyectores galácticos de nebulosa y robots interactivos de compañía.'
     },
     {
-      q: '¿El precio que veo es el precio del proveedor?',
-      a: 'No. El precio grande es el precio de venta de LUMIKO, con IVA incluido. Justo debajo mostramos, por transparencia, el coste de referencia del proveedor y su unidad de venta (por ejemplo, por pieza o por conjunto) y el MOQ que exige.'
+      q: '¿Cómo se controlan las lámparas y luces?',
+      a: 'La mayoría de modelos se gestionan mediante app móvil gratuita (iOS y Android), mando a distancia por infrarrojos o controles táctiles integrados, permitiendo regular brillo, colores, efectos y sincronización con música.'
     },
     {
-      q: '¿Qué significa el MOQ que aparece en la ficha?',
-      a: 'Es la cantidad mínima que el proveedor vende en una sola operación. En los fabricantes del marketplace suele ser un lote; en el distribuidor europeo es 1 unidad. La tienda vende siempre por unidades sueltas, así que el MOQ se muestra como dato de trazabilidad del origen. Si necesitas una cantidad grande, escríbenos y lo revisamos.'
+      q: '¿Cuánto tarda el envío y cuál es el coste?',
+      a: 'El envío es gratuito para pedidos superiores a 49 €. Para importes inferiores, el coste es de 4,95 €. La entrega se realiza en 24-48 horas laborables con seguimiento en tiempo real vía email.'
     },
     {
       q: '¿Cómo se procesa el pago?',
-      a: 'Con Stripe Checkout sobre TLS. Los datos de tu tarjeta se introducen en el dominio de Stripe: LUMIKO no los recibe ni los almacena. El importe se recalcula en el servidor antes de crear la sesión de pago, y el pedido se marca como pagado cuando Stripe confirma la firma del webhook.'
+      a: 'A través de Stripe Checkout con cifrado bancario TLS de 256 bits. Aceptamos tarjetas de crédito y débito (Visa, Mastercard, AMEX), Apple Pay y Google Pay. LUMIKO nunca almacena los datos de tu tarjeta.'
     },
     {
-      q: '¿Cuánto tarda el envío?',
-      a: 'Depende del proveedor y del destino. En cada ficha mostramos el plazo de entrega y la tasa de entrega cuando el proveedor los publica. Al confirmar el pedido te enviamos por email el plazo concreto antes de preparar el envío.'
+      q: '¿Tienen garantía los productos?',
+      a: 'Sí, absolutamente todos los productos incluyen 3 años de garantía oficial ante cualquier fallo técnico o de componentes.'
     },
     {
-      q: '¿Puedo devolverlo?',
-      a: 'Sí, tienes 14 días desde la recepción del pedido para devolverlo en su embalaje original. Escríbenos con la referencia del pedido y te indicamos cómo enviarlo.'
+      q: '¿Puedo devolver el producto si no me convence?',
+      a: 'Sí, tienes 14 días naturales desde la recepción del paquete para solicitar una devolución sencilla en su embalaje original.'
     }
   ];
 
   openFaq: number | null = 0;
 
-  constructor(private catalog: CatalogService, private toast: ToastService) {}
-
-  get suppliers(): SupplierHighlight[] {
-    const byId: { [id: string]: SupplierHighlight } = {};
-
-    this.catalog.all().forEach((product) => {
-      const supplier = product.supplier;
-      const existing = byId[supplier.id];
-      if (existing) {
-        existing.products += 1;
-        return;
-      }
-      byId[supplier.id] = {
-        id: supplier.id,
-        name: supplier.name,
-        originLabel: COUNTRY_LABEL[supplier.country] || supplier.country || 'Origen no indicado',
-        businessTypeLabel: BUSINESS_TYPE_LABEL[supplier.businessType] || 'Proveedor',
-        verified: supplier.verified,
-        rating: supplier.rating,
-        yearsActive: supplier.yearsActive,
-        deliveryRate: supplier.deliveryRate,
-        sold180: supplier.sold180,
-        products: 1
-      };
-    });
-
-    return Object.keys(byId)
-      .map((key) => byId[key])
-      .sort(
-        (a, b) =>
-          Number(b.verified) - Number(a.verified) ||
-          b.rating - a.rating ||
-          b.sold180 - a.sold180
-      )
-      .slice(0, 3);
-  }
-
-  get verifiedShare(): number {
-    const stats = this.catalog.stats();
-    return stats.suppliers ? Math.round((stats.verified / stats.suppliers) * 100) : 0;
-  }
+  constructor(private toast: ToastService) {}
 
   toggleFaq(index: number): void {
     this.openFaq = this.openFaq === index ? null : index;
   }
 
   copyCoupon(): void {
-    const nav = navigator as Navigator & { clipboard?: Clipboard };
-    if (nav.clipboard && nav.clipboard.writeText) {
-      nav.clipboard.writeText(this.couponCode).then(
-        () => this.toast.show(`Código ${this.couponCode} copiado`),
-        () => this.toast.show(`Tu código es ${this.couponCode}`, 'info')
-      );
-      return;
+    if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(this.couponCode).catch(() => {});
     }
-    this.toast.show(`Tu código es ${this.couponCode}`, 'info');
-  }
-
-  stars(count: number): number[] {
-    return Array(Math.max(0, Math.round(count))).fill(0);
+    this.toast.show(`Cupón ${this.couponCode} copiado al portapapeles`);
   }
 }

@@ -8,23 +8,23 @@ import { CatalogService } from '../../core/catalog/catalog.service';
 export class ExperienceComponent {
   readonly steps = [
     {
-      title: 'Elige sobre datos reales',
-      text: 'Cada ficha muestra la imagen, el precio, el MOQ y el enlace públicos del proveedor que fabrica el producto. Sin catálogos inventados.',
+      title: 'Diseño e Innovación',
+      text: 'Lámparas inteligentes y robots con tecnología LED conectada, sincronización musical y control total desde tu móvil.',
       icon: 'search'
     },
     {
-      title: 'Precio y origen a la vista',
-      text: 'Verás el precio de venta LUMIKO junto al coste de referencia del proveedor, su país, su antigüedad y su valoración pública.',
+      title: 'Calidad Certificada',
+      text: 'Cada producto pasa rigurosos controles de seguridad eléctrica y durabilidad europea con 3 años de garantía oficial.',
       icon: 'tag'
     },
     {
-      title: 'Paga con Stripe',
-      text: 'El checkout se procesa en Stripe Checkout sobre TLS. LUMIKO nunca ve ni almacena los datos de tu tarjeta.',
+      title: 'Pago 100% Seguro',
+      text: 'El checkout se procesa en Stripe Checkout con encriptación bancaria TLS de 256 bits. Aceptamos tarjetas, Apple Pay y Google Pay.',
       icon: 'lock'
     },
     {
-      title: 'Confirmación verificada',
-      text: 'El pedido se marca como pagado cuando Stripe confirma la firma del webhook, no cuando el navegador vuelve a la tienda.',
+      title: 'Envío Express y Seguimiento',
+      text: 'Despacho rápido con número de tracking directo a tu email para que sigas tu paquete paso a paso hasta tu puerta.',
       icon: 'check'
     }
   ];

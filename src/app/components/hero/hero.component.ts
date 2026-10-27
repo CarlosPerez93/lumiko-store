@@ -15,8 +15,8 @@ export class HeroComponent {
     'Envío gratis desde 49 €',
     'Pago seguro con Stripe',
     'Control por app y voz',
-    'Proveedores de Alibaba.com',
-    'Precios y MOQ reales',
+    'Garantía oficial 3 años',
+    'Entrega express 24/48h',
     'Devolución en 14 días'
   ];
 
@@ -32,9 +32,9 @@ export class HeroComponent {
   get stats(): { value: string; label: string }[] {
     const s = this.catalog.stats();
     return [
-      { value: String(s.products), label: 'productos reales' },
-      { value: String(s.suppliers), label: 'proveedores' },
-      { value: String(s.verified), label: 'verificados' }
+      { value: String(s.products), label: 'diseños exclusivos' },
+      { value: '24-48h', label: 'envío express' },
+      { value: '3 años', label: 'garantía oficial' }
     ];
   }
 

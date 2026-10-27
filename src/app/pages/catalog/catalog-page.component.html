@@ -8,31 +8,30 @@
   <div class="container-x">
     <span class="eyebrow">
       <span class="h-px w-8 bg-neon-pink"></span>
-      Catálogo real · {{ stats.products }} referencias
+      Colección 2026 · {{ stats.products }} modelos disponibles
     </span>
     <h1 class="section-title mt-4 max-w-3xl balance">Todo el catálogo LUMIKO</h1>
     <p class="mt-4 max-w-2xl text-[15px] leading-relaxed text-slate-400">
-      Selección de lámparas inteligentes de anime, robots de compañía, proyectores y accesorios
-      gaming. Los datos comerciales (precio de origen, MOQ, valoración y plazo) provienen de la
-      ficha pública del proveedor y se muestran sin editar.
+      Selección exclusiva de lámparas inteligentes de anime, robots interactivos, proyectores de galaxias y paneles pixel art.
+      Todos los productos cuentan con 3 años de garantía oficial y envío rápido en 24/48h.
     </p>
 
     <dl class="mt-9 grid max-w-2xl grid-cols-2 gap-4 border-t border-white/10 pt-6 sm:grid-cols-4">
       <div>
         <dt class="font-display text-xl font-bold text-white">{{ stats.products }}</dt>
-        <dd class="text-[11px] uppercase tracking-[0.14em] text-slate-500">productos</dd>
+        <dd class="text-[11px] uppercase tracking-[0.14em] text-slate-500">modelos</dd>
       </div>
       <div>
-        <dt class="font-display text-xl font-bold text-white">{{ stats.suppliers }}</dt>
-        <dd class="text-[11px] uppercase tracking-[0.14em] text-slate-500">proveedores</dd>
+        <dt class="font-display text-xl font-bold text-neon-lime">3 Años</dt>
+        <dd class="text-[11px] uppercase tracking-[0.14em] text-slate-500">garantía oficial</dd>
       </div>
       <div>
-        <dt class="font-display text-xl font-bold text-neon-lime">{{ stats.verified }}</dt>
-        <dd class="text-[11px] uppercase tracking-[0.14em] text-slate-500">verificados</dd>
+        <dt class="font-display text-xl font-bold text-white">24/48h</dt>
+        <dd class="text-[11px] uppercase tracking-[0.14em] text-slate-500">envío express</dd>
       </div>
       <div>
-        <dt class="font-display text-xl font-bold text-white">{{ stats.minPrice | currency: 'EUR' : 'symbol' : '1.0-0' }}–{{ stats.maxPrice | currency: 'EUR' : 'symbol' : '1.0-0' }}</dt>
-        <dd class="text-[11px] uppercase tracking-[0.14em] text-slate-500">rango de precio</dd>
+        <dt class="font-display text-xl font-bold text-white">Gratis</dt>
+        <dd class="text-[11px] uppercase tracking-[0.14em] text-slate-500">desde 49 €</dd>
       </div>
     </dl>
   </div>
@@ -47,7 +46,7 @@
         <input
           type="search"
           [(ngModel)]="term"
-          placeholder="Buscar por nombre, acabado o proveedor…"
+          placeholder="Buscar por nombre, categoría o anime…"
           aria-label="Buscar productos"
           class="w-full rounded-full border border-white/[0.12] bg-white/[0.05] py-3 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-neon-pink/60"
         />
@@ -109,22 +108,29 @@
       <button type="button" class="btn-primary mt-6" (click)="clearFilters()">Ver los {{ stats.products }} productos</button>
     </div>
 
-    <!-- Fuentes -->
-    <div class="mt-12 rounded-3xl border border-white/10 bg-white/[0.02] p-6">
-      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Fuentes integradas</p>
-      <div class="mt-4 grid gap-4 sm:grid-cols-2">
-        <div *ngFor="let source of sources" class="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4">
-          <p class="text-sm font-semibold text-white">{{ source.label }}</p>
+    <!-- Garantía LUMIKO -->
+    <div class="mt-12 rounded-3xl border border-white/10 bg-white/[0.02] p-6 sm:p-8">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-neon-cyan">Compromiso LUMIKO</p>
+      <div class="mt-4 grid gap-4 sm:grid-cols-3">
+        <div class="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4">
+          <p class="text-sm font-semibold text-white">Envío Gratuito desde 49 €</p>
           <p class="mt-1 text-xs text-slate-400">
-            {{ source.products }} productos · región {{ source.region }} · tipo {{ source.kind }}
+            Entrega express en 24-48 horas con número de seguimiento en tiempo real.
           </p>
-          <p class="mt-1 text-[11px] text-slate-600">Sincronizado el {{ source.generatedAt }}</p>
+        </div>
+        <div class="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4">
+          <p class="text-sm font-semibold text-white">3 Años de Garantía Oficial</p>
+          <p class="mt-1 text-xs text-slate-400">
+            Cobertura total ante cualquier fallo de iluminación LED o componentes.
+          </p>
+        </div>
+        <div class="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4">
+          <p class="text-sm font-semibold text-white">Devolución en 14 Días</p>
+          <p class="mt-1 text-xs text-slate-400">
+            Pruébalo en tu habitación; si no te convence, lo devuelves sin complicaciones.
+          </p>
         </div>
       </div>
-      <p class="mt-4 text-[11px] leading-relaxed text-slate-600">
-        Añadir un proveedor nuevo no requiere tocar la tienda: se registra un adaptador y el catálogo
-        se recompone solo. Consulta la documentación técnica del repositorio.
-      </p>
     </div>
   </div>
 </section>

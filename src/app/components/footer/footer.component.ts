@@ -36,8 +36,8 @@ export class FooterComponent {
       links: [
         { label: 'Envíos y entregas', path: '/', fragment: 'faq' },
         { label: 'Devoluciones', path: '/', fragment: 'faq' },
+        { label: 'Garantía y Calidad', path: '/', fragment: 'garantia' },
         { label: 'Cómo funciona', path: '/', fragment: 'experiencia' },
-        { label: 'Proveedores', path: '/', fragment: 'proveedores' },
         { label: 'Contacto', href: 'mailto:hola@lumiko.store' }
       ]
     },

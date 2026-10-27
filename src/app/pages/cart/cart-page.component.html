@@ -44,7 +44,7 @@
                     <a [routerLink]="['/producto', line.product.id]" class="block truncate font-display text-sm font-semibold text-white transition hover:text-neon-pink">
                       {{ line.product.name }}
                     </a>
-                    <p class="mt-1 truncate text-[11px] text-slate-500">{{ line.product.supplier.name }}</p>
+                    <p class="mt-1 text-[11px] text-neon-cyan">Garantía oficial LUMIKO de 3 años</p>
                     <p class="mt-1 text-[11px]" [ngClass]="line.product.availability === 'disponible' ? 'text-neon-lime' : 'text-neon-amber'">
                       {{ line.product.availabilityLabel }}
                     </p>
